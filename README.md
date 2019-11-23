@@ -1,18 +1,20 @@
-# noteful-api
+# sessionhero-api
 
-An Express server app with CRUD endpoints that retrieves data from a json or PostgreSQL datasource.
+An Express server app with CRUD endpoints that retrieves data from a PostgreSQL datasource.
 
-Works with [https://github.com/asktami/noteful-react-client](https://github.com/asktami/noteful-react-client).
+Works with [https://github.com/asktami/sessionhero-app](https://github.com/asktami/sessionhero-app).
 
-- SQL migration scripts to create the Noteful database with tables for folders and notes including relationships and CASCADES
+- a schedule is linked to both a _user_ record and a _session_ record
 
-- A folder is a _parent_ record to child _note_ records
+- a comment is linked to both a _user_ record and a _session_ record
 
-- Note and Folder service objects for the note and folder tables
+- SQL migration scripts to create the sessionhero database with tables for sessions, schedule, comments, and users including relationships and CASCADES
 
-- Routers to perform CRUD operations for Notes and Folders
+- service objects for all tables
 
-- An Express server for the Noteful API with the endpoints /notes and /folders
+- routers to perform CRUD operations
+
+- an Express server for the API with various endpoints
 
 ## Setup
 
@@ -20,12 +22,12 @@ Works with [https://github.com/asktami/noteful-react-client](https://github.com/
 2. In Terminal, change to the directory on your computer that contains this repo
 3. Install dependencies: `npm install`
 
-4. Create the database user (as a superuser): `createuser -s noteful`
+4. Create the database user (as a superuser): `createuser -s sessionhero`
 
-5. Create the `noteful` PostgreSQL databases:
+5. Create the `sessionhero` PostgreSQL databases:
 
-   - `createdb -U noteful noteful`
-   - `createdb -U noteful noteful-test`
+   - `createdb -U sessionhero sessionhero`
+   - `createdb -U sessionhero sessionhero-test`
 
 6. Environment:
 
@@ -58,22 +60,22 @@ timezone = 'UTC'
 - To seed the development database:
 
 ```
-psql -U noteful -d noteful -f ./seeds/seed.folder.sql
-psql -U noteful -d noteful -f ./seeds/seed.note.sql
+psql -U sessionhero -d sessionhero -f ./seeds/seed.folder.sql
+psql -U sessionhero -d sessionhero -f ./seeds/seed.note.sql
 ```
 
 - To seed the test database:
 
 ```
-psql -U noteful -d noteful-test -f ./seeds/seed.folder.sql
-psql -U noteful -d noteful-test -f ./seeds/seed.note.sql
+psql -U sessionhero -d sessionhero-test -f ./seeds/seed.sessionhero_tables.sql
+psql -U sessionhero -d sessionhero-test -f ./seeds/seed.sessionhero_tables.sql
 ```
 
 - To clear seed data:
 
 ```
-psql -U noteful -d noteful -a -f seeds/trunc.noteful_tables.sql.sql
-psql -U noteful -d noteful-test -a -f seeds/trunc.noteful_tables.sql.sql
+psql -U sessionhero -d sessionhero -a -f seeds/trunc.sessionhero_tables.sql
+psql -U sessionhero -d sessionhero-test -a -f seeds/trunc.sessionhero_tables.sql
 ```
 
 ## Scripts
