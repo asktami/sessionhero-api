@@ -1,0 +1,35 @@
+-- NOTE: "sesions" is PARENT with 1 to many CHILD "comments" records
+
+-- in Terminal
+
+-- create database user (as superuser):
+createuser -s sessionhero
+
+-- create database:
+createdb -U sessionhero sessionhero
+
+-- create test database:
+createdb  -U sessionhero sessionhero-test
+
+-- create tables:
+-- before running migrate make sure src/config.js and .env have database info
+cd /Library/WebServer/Documents/GitHub/Bloc/sessionhero-api
+
+-- make .env NODE_ENV = production to migrate non-test database
+-- make .env NODE_ENV = test to migrate test database (or just npm run migrate:test )
+
+npm run migrate
+
+-- seed tables:
+psql -U sessionhero -d sessionhero -f ./seeds/seed.folder.sql
+psql -U sessionhero -d sessionhero -f ./seeds/seed.note.sql
+
+
+-- seed test tables:
+psql -U sessionhero -d sessionhero-test -f ./seeds/seed.folder.sql
+psql -U sessionhero -d sessionhero-test -f ./seeds/seed.note.sql
+
+
+-- change .env NODE_ENV to "test"
+
+-- switch CLIENT src/config.js to use PostgreSQL databases instead of json.db
