@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const logger = require('../logger');
 const userService = require('./users-service');
 
 const userRouter = express.Router();

@@ -22,6 +22,7 @@ const jsonBodyParser = express.json();
 // });
 
 // all endpoints are protected
+// requireAuth is how we capture loggedId userId = req.user.id
 commentRouter.post(requireAuth, jsonBodyParser, (req, res, next) => {
 	const { text, rating, sessionId } = req.body;
 	const newComment = { text, rating, sessionId };
@@ -68,7 +69,7 @@ commentRouter.post(requireAuth, jsonBodyParser, (req, res, next) => {
 			res
 				.status(201)
 				.location(path.posix.join(req.originalUrl, `/${comment.id}`))
-				.json(commentService.serializeComment(comment));
+				.json(commentService.serializeComment(res.comment));
 			// return back all the fields in the comment that was created using serializeComment
 		})
 		.catch(next);
@@ -104,21 +105,21 @@ commentRouter
 	.patch(jsonBodyParser, (req, res, next) => {
 		const knexInstance = req.app.get('db');
 		const { id } = req.params;
-		const { text, rating, sessionId } = req.body;
-		const commentToUpdate = { text, rating, sessionId };
+		const { text, rating } = req.body;
+		const commentToUpdate = { text, rating };
 
 		const numberOfValues = Object.values(commentToUpdate).filter(Boolean)
 			.length;
 		if (numberOfValues === 0) {
 			logger.error({
-				message: `Invalid update without required fields: text, rating, and sessionId`,
+				message: `Invalid update without required fields: text and rating`,
 				request: `${req.originalUrl}`,
 				method: `${req.method}`,
 				ip: `${req.ip}`
 			});
 			return res.status(400).json({
 				error: {
-					message: `Update must contain text, rating, and sessionId`
+					message: `Update must contain text and rating`
 				}
 			});
 		}

@@ -1,16 +1,16 @@
 // methods to store database transactions
-const xss = require('xss');
 let table = 'schedule';
 
 const scheduleService = {
 	// TBD
 	// get schedule records for loggedIn users, join to user table and session table
-	getAllSchedule(db) {
-		return db
+	getAllSchedule(knex, userId) {
+		return knex
 			.from(table)
-			.select('*', ...userFields, ...sessionFields)
-			.leftJoin('users AS usr', 'schedule.userId', 'usr.id')
-			.leftJoin('sessions', 'schedule.sessionId', 'session.id');
+			.select('*')
+			.leftJoin('users', 'schedule.userId', 'users.id')
+			.leftJoin('sessions', 'schedule.sessionId', 'sessions.id')
+			.where('userId', userId);
 	},
 
 	insertSchedule(knex, newScheduleItem) {
@@ -35,6 +35,8 @@ const scheduleService = {
 			.delete();
 	},
 
+	// TBD HOW to return a serialized JOIN with users and sessions?
+	// AND - do I need to???
 	// record returned after successful insert/update
 	serializeSchedule(schedule) {
 		return {
@@ -45,30 +47,24 @@ const scheduleService = {
 	}
 };
 
-const userFields = [
-	'usr.id AS user:id',
-	'usr.user_name AS user:username',
-	'usr.full_name AS user:fullname',
-	'usr.date_created AS user:date_created',
-	'usr.date_modified AS user:date_modified'
-];
+// const userFields = ['usr.id AS user:id', 'usr.fullname AS user:fullname'];
 
-const sessionFields = [
-	// id: session.id,
-	// track: session.track,
-	// day: session.day,
-	// date: session.date,
-	// time_start: session.time_start,
-	// time_end: session.time_end,
-	// location: session.location,
-	// name: session.name,
-	// description: session.description,
-	// background: session.background,
-	// objective_1: session.objective_1,
-	// objective_2: session.objective_2,
-	// objective_3: session.objective_3,
-	// objective_4: session.objective_4,
-	// speaker: session.speaker,
-];
+// const sessionFields = [
+// 	session.id,
+// 	session.track,
+// 	session.day,
+// 	session.date,
+// 	session.time_start,
+// 	session.time_end,
+// 	session.location,
+// 	session.name,
+// 	session.description,
+// 	session.background,
+// 	session.objective_1,
+// 	session.objective_2,
+// 	session.objective_3,
+// 	session.objective_4,
+// 	xsession.speaker
+// ];
 
 module.exports = scheduleService;

@@ -54,19 +54,19 @@ const sessionService = {
 
 		return {
 			id: sessionData.id,
-			track: xss(sessionData.track),
-			day: xss(sessionData.day),
-			date: xss(sessionData.date),
-			time_start: xss(sessionData.time_start),
-			time_end: xss(sessionData.time_end),
-			location: xss(sessionData.location),
-			name: xss(sessionData.name),
-			description: xss(sessionData.description),
-			background: xss(sessionData.background),
-			objective_1: xss(sessionData.objective_1),
-			objective_2: xss(sessionData.objective_2),
-			objective_3: xss(sessionData.objective_3),
-			objective_4: xss(sessionData.objective_4),
+			track: sessionData.track,
+			day: sessionData.day,
+			date: sessionData.date,
+			time_start: sessionData.time_start,
+			time_end: sessionData.time_end,
+			location: sessionData.location,
+			name: sessionData.name,
+			description: sessionData.description,
+			background: sessionData.background,
+			objective_1: sessionData.objective_1,
+			objective_2: sessionData.objective_2,
+			objective_3: sessionData.objective_3,
+			objective_4: sessionData.objective_4,
 			speaker: sessionData.speaker,
 			user: sessionData.user || {},
 			number_of_comments: Number(sessionData.number_of_comments) || 0,
@@ -98,6 +98,7 @@ const sessionService = {
 	}
 };
 
+// TBD why is there a colon?
 const userFields = [
 	'usr.id AS user:id',
 	'usr.user_name AS user:username',
