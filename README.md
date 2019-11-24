@@ -60,14 +60,12 @@ timezone = 'UTC'
 - To seed the development database:
 
 ```
-psql -U sessionhero -d sessionhero -f ./seeds/seed.folder.sql
-psql -U sessionhero -d sessionhero -f ./seeds/seed.note.sql
+psql -U sessionhero -d sessionhero -f ./seeds/seed.sessionhero_tables.sql
 ```
 
 - To seed the test database:
 
 ```
-psql -U sessionhero -d sessionhero-test -f ./seeds/seed.sessionhero_tables.sql
 psql -U sessionhero -d sessionhero-test -f ./seeds/seed.sessionhero_tables.sql
 ```
 
