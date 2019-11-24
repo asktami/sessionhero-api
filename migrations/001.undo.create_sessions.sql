@@ -1,4 +1,1 @@
-ALTER TABLE schedule
-  DROP COLUMN IF EXISTS sessionId;
-
 DROP TABLE IF EXISTS sessions;

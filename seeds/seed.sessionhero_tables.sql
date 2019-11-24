@@ -1,3 +1,5 @@
+-- Insertion order is important, Comments and Schedule require Users and Sessions because of relationships so those must be inserted first!
+
 BEGIN;
 
 TRUNCATE
@@ -7,26 +9,11 @@ TRUNCATE
   users
   RESTART IDENTITY CASCADE;
 
-INSERT INTO users (username,  password, fullname,)
+INSERT INTO users (username,  password, fullname)
 VALUES
 ('demoUser', '$2a$12$otAlCQST//.2BWkPLhDC4.dCTapcHh6iC7.LLIeRRtAgP/MR.B5CK', 'Demo User'),
   ('dunder', '$2a$12$ijvWD84EtJhC8AKFjT1cB.Bcm7T28M7/9pPs6E03Yl8z5rcd6Ld5.', 'Dunder Mifflin')
   ;
-
-
-INSERT INTO schedule (id, sessionId, userId)
-VALUES
- (1,'BUS04',1)
-,(2,'CRE12',1)
-,(3,'TRA08',1);
-
-
-INSERT INTO comments (id, text, rating, date_created, sessionId, userId)
-VALUES
- (1,'This thing is amazing.',4,'2019-10-31 23:14:12.649275','BUS04',1)
-,(2,'Put a bird on it!',4,'2019-10-31 23:14:12.649275','BUS04',1)
-,(3,'All the other reviewers are obviously insane, but this thing is actually pretty amazing.',5,'2019-10-31 23:14:12.649275','CRE12',2)
-,(4,'When life gives you lemons, trade them for this thing.',4,'2019-10-31 23:14:12.649275','CRE12',2);
 
 
 INSERT INTO sessions (track, day, date, time_start, time_end, location, id, name, description, background, objective_1, objective_2, objective_3, objective_4, speaker)
@@ -159,5 +146,19 @@ VALUES
 ,('Vendor Session','thu','8/8/2019','13:30:00','14:00:00','Sun Ballroom','VEN14','Soliant.cloud: Taking FileMaker hosting to the next level','Bill Heizer, Senior Technical Architect at Soliant Consulting, shares insights on how to migrate your FileMaker application to the cloud. See how bridging FileMaker, IT Infrastructure, and Amazon Web Services through Soliant.cloud can serve as an ideal solution.We’ll examine the components of a platform as a service to support a rich FileMaker deployment in AWS without limits. Learn about instance builds and monitoring of both services'' availability as well as the costs of leveraging AWS APIs, maintenance, security roles and policies. We’ll explore SSL, FileMaker plugins, networking, API access, backups, disaster recovery, server side Scripting, and administrative access. See how launching Soliant.cloud can increase your application’s capabilities.',NULL,NULL,NULL,NULL,NULL,'Bill Heizer (Soliant Consulting)')
 ,('Vendor Session','thu','8/8/2019','14:15:00','14:45:00','Sun Ballroom','VEN04','Who Wants to Be a FileMaker Developer?','The FileMaker Developer Conference consistently offers great networking and awesome learning opportunities year after year. Take a break from the seriousness, and join the Cross team and host Regis Fill-in for some trivia fun! Test your knowledge on topics ranging from the FileMaker Platform to Disney to Geek Culture. Visit the Cross booth to sign up for a chance to take your turn in the hot seat. If you prefer, simply join the “studio” audience to cheer on the contestants as each question gets progressively harder, and to offer your insight when a life line is needed. Everyone in attendance is eligible to win one of our special prizes.  This is your chance to have some fun, test your FileMaker knowledge, and meet the Cross team!',NULL,NULL,NULL,NULL,NULL,'D. Todd Weller (Cross IT Services & Solutions, LLC)');
 
+
+INSERT INTO schedule (id, sessionId, userId)
+VALUES
+ (1,'BUS04',1)
+,(2,'CRE12',1)
+,(3,'TRA08',1);
+
+
+INSERT INTO comments (id, text, rating, date_created, sessionId, userId)
+VALUES
+ (1,'This thing is amazing.',4,'2019-10-31 23:14:12.649275','BUS04',1)
+,(2,'Put a bird on it!',4,'2019-10-31 23:14:12.649275','BUS04',1)
+,(3,'All the other reviewers are obviously insane, but this thing is actually pretty amazing.',5,'2019-10-31 23:14:12.649275','CRE12',2)
+,(4,'When life gives you lemons, trade them for this thing.',4,'2019-10-31 23:14:12.649275','CRE12',2);
 
 COMMIT;

@@ -1,7 +1,1 @@
-ALTER TABLE comments
-  DROP COLUMN IF EXISTS userId;
-
-ALTER TABLE schedule
-  DROP COLUMN IF EXISTS userId;
-
 DROP TABLE IF EXISTS users;

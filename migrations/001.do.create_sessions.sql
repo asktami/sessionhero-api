@@ -13,6 +13,6 @@ CREATE TABLE sessions(
   objective_2 VARCHAR,
   objective_3 VARCHAR,
   objective_4 VARCHAR,
-  speaker     VARCHAR NOT NULL,
+  speaker     VARCHAR,
   date_created TIMESTAMP DEFAULT now() NOT NULL
 );

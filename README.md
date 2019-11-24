@@ -35,8 +35,13 @@ Works with [https://github.com/asktami/sessionhero-app](https://github.com/askta
    - Replace values in `.env` with your custom values.
 
 7. Create development and test database tables:
+
    - `npm run migrate`
    - `npm run migrate:test`
+
+8. To delete the tables in the databases:
+   - `npm run migrate -- 0`
+   - `npm migrate:test -- 0`
 
 ### Configure Postgres
 
