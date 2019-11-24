@@ -10,7 +10,7 @@ const { requireAuth } = require('../middleware/jwt-auth');
 const sessionRouter = express.Router();
 
 // UNprotected endpoint (getAllSessions)
-sessionRouter.route('/').get((req, res, next) => {
+sessionRouter.route('/sessions').get((req, res, next) => {
 	const knexInstance = req.app.get('db');
 	sessionService
 		.getAllSessions(knexInstance)
