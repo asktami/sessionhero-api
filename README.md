@@ -41,7 +41,7 @@ Works with [https://github.com/asktami/sessionhero-app](https://github.com/askta
 
 8. To delete the tables in the databases:
    - `npm run migrate -- 0`
-   - `npm migrate:test -- 0`
+   - `npm run migrate:test -- 0`
 
 ### Configure Postgres
 
