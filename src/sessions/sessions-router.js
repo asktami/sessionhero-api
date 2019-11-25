@@ -10,15 +10,15 @@ const { requireAuth } = require('../middleware/jwt-auth');
 const sessionRouter = express.Router();
 
 // UNprotected endpoint (getAllSessions)
-sessionRouter.route('/sessions').get((req, res, next) => {
+sessionRouter.route('/').get((req, res, next) => {
 	const knexInstance = req.app.get('db');
 	sessionService
 		.getAllSessions(knexInstance)
 		.then(sessions => {
-			// TBD is this the same as line 32???
-			res.json(
-				sessions.map(session => sessionService.serializeSession(session))
-			);
+			// NOTE: this is the same as:
+			// res.json(
+			// 	sessions.map(session => sessionService.serializeSession(session))
+			res.json(sessions.map(sessionService.serializeSession));
 		})
 		.catch(next);
 });

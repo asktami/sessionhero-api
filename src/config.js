@@ -1,6 +1,6 @@
 module.exports = {
 	PORT: process.env.PORT || 8000,
-	NODE_ENV: process.env.NODE_ENV || 'development',
+	NODE_ENV: process.env.NODE_ENV || 'production',
 	API_TOKEN: process.env.API_TOKEN || 'dummy-api-token',
 	TEST_DATABASE_URL:
 		process.env.TEST_DATABASE_URL ||

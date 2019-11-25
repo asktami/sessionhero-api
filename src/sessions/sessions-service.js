@@ -5,23 +5,12 @@ let table = 'sessions';
 
 const sessionService = {
 	getAllSessions(db) {
-		return db
-			.from('sessions AS ses')
-			.select(
-				'*',
-				...userFields,
-				db.raw(`count(DISTINCT com) AS number_of_comments`),
-				db.raw(`AVG(com.rating) AS average_comment_rating`)
-			)
-			.leftJoin('comments AS com', 'ses.id', 'com.thing_id')
-			.leftJoin('users AS usr', 'ses.user_id', 'usr.id')
-			.groupBy('ses.id', 'usr.id');
+		return db.select('sessions.*').from(table);
 	},
-
 	getById(db, id) {
 		return sessionService
 			.getAllSessions(db)
-			.where('ses.id', id)
+			.where('sessions.id', id)
 			.first();
 	},
 
@@ -36,7 +25,7 @@ const sessionService = {
 				...userFields
 			)
 			.where('com.sessionId', sessionId)
-			.leftJoin('users AS usr', 'com.userId', 'usr.id')
+			.leftJoin('users AS usr', 'com.userid', 'usr.id')
 			.groupBy('com.id', 'usr.id');
 	},
 
@@ -68,7 +57,7 @@ const sessionService = {
 			objective_3: sessionData.objective_3,
 			objective_4: sessionData.objective_4,
 			speaker: sessionData.speaker,
-			user: sessionData.user || {},
+			// user: sessionData.user || {},
 			number_of_comments: Number(sessionData.number_of_comments) || 0,
 			average_comment_rating:
 				Math.round(sessionData.average_comment_rating) || 0
