@@ -7,9 +7,9 @@ const scheduleService = {
 	getAllSchedule(knex, loginUserId) {
 		return knex.raw(
 			`select * from schedule
-			left join sessions on schedule.sessionid = sessions.id
-			left join users on schedule.userid = users.id
-			where schedule.userid = :loginUserId
+			left join sessions on schedule.session_id = sessions.id
+			left join users on schedule.user_id = users.id
+			where schedule.user_id = :loginUserId
 			order by sessions.date, sessions.time_start`,
 			{ loginUserId: loginUserId }
 		);
@@ -44,8 +44,8 @@ const scheduleService = {
 	serializeSchedule(schedule) {
 		return {
 			id: schedule.id,
-			sessionId: schedule.sessionId,
-			userId: schedule.userId
+			session_id: schedule.session_id,
+			user_id: schedule.user_id
 		};
 	}
 };

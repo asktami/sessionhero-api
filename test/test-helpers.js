@@ -195,32 +195,32 @@ function makeCommentsArray(users, sessions) {
 			id: 1,
 			rating: 2,
 			text: 'First test review!',
-			sessionId: sessions[0].id,
-			userId: users[0].id,
+			session_id: sessions[0].id,
+			user_id: users[0].id,
 			date_created: '2029-01-22T16:28:32.615Z'
 		},
 		{
 			id: 2,
 			rating: 3,
 			text: 'Second test review!',
-			sessionId: sessions[0].id,
-			userId: users[1].id,
+			session_id: sessions[0].id,
+			user_id: users[1].id,
 			date_created: '2029-01-22T16:28:32.615Z'
 		},
 		{
 			id: 3,
 			rating: 1,
 			text: 'Third test review!',
-			sessionId: sessions[1].id,
-			userId: users[0].id,
+			session_id: sessions[1].id,
+			user_id: users[0].id,
 			date_created: '2029-01-22T16:28:32.615Z'
 		},
 		{
 			id: 4,
 			rating: 5,
 			text: 'Fourth test review!',
-			sessionId: sessions[1].id,
-			userId: users[1].id,
+			session_id: sessions[1].id,
+			user_id: users[1].id,
 			date_created: '2029-01-22T16:28:32.615Z'
 		}
 	];
@@ -230,38 +230,38 @@ function makeScheduleArray(users, sessions) {
 	return [
 		{
 			id: 1,
-			sessionId: sessions[0].id,
-			userId: users[0].id,
+			session_id: sessions[0].id,
+			user_id: users[0].id,
 			date_created: '2029-01-22T16:28:32.615Z'
 		},
 		{
 			id: 2,
-			sessionId: sessions[1].id,
-			userId: users[0].id,
+			session_id: sessions[1].id,
+			user_id: users[0].id,
 			date_created: '2029-01-22T16:28:32.615Z'
 		},
 		{
 			id: 3,
-			sessionId: sessions[2].id,
-			userId: users[0].id,
+			session_id: sessions[2].id,
+			user_id: users[0].id,
 			date_created: '2029-01-22T16:28:32.615Z'
 		},
 		{
 			id: 4,
-			sessionId: sessions[0].id,
-			userId: users[1].id,
+			session_id: sessions[0].id,
+			user_id: users[1].id,
 			date_created: '2029-01-22T16:28:32.615Z'
 		},
 		{
 			id: 5,
-			sessionId: sessions[1].id,
-			userId: users[1].id,
+			session_id: sessions[1].id,
+			user_id: users[1].id,
 			date_created: '2029-01-22T16:28:32.615Z'
 		},
 		{
 			id: 6,
-			sessionId: sessions[2].id,
-			userId: users[1].id,
+			session_id: sessions[2].id,
+			user_id: users[1].id,
 			date_created: '2029-01-22T16:28:32.615Z'
 		}
 	];
@@ -269,10 +269,10 @@ function makeScheduleArray(users, sessions) {
 
 // make table join of sessions + comments
 function makeExpectedSession(users, sessions, schedule, comments = []) {
-	const user = users.find(user => user.id === schedule.userId);
+	const user = users.find(user => user.id === schedule.user_id);
 
 	const sessionComments = comments.filter(
-		comment => comment.sessionId === sessions.id
+		comment => comment.session_id === sessions.id
 	);
 
 	const number_of_reviews = sessionComments.length;
@@ -317,11 +317,11 @@ function calculateAverageReviewRating(comments) {
 // make table join of comments + users
 function makeExpectedSessionComments(users, sessions, comments) {
 	const expectedComments = comments.filter(
-		comment => comment.sessionId === sessions.id
+		comment => comment.session_id === sessions.id
 	);
 
 	return expectedComments.map(comment => {
-		const commentUser = users.find(user => user.id === comment.userId);
+		const commentUser = users.find(user => user.id === comment.user_id);
 
 		return {
 			id: comment.id,
@@ -340,10 +340,10 @@ function makeExpectedSessionComments(users, sessions, comments) {
 
 // make table join of sessions + schedule + user
 function makeExpectedSchedule(users, sessions, schedule, comments = []) {
-	const user = users.find(user => user.id === schedule.userId);
+	const user = users.find(user => user.id === schedule.user_id);
 
 	const sessionSchedule = schedule.find(
-		schedule => schedule.sessionId === sessions.id
+		schedule => schedule.session_id === sessions.id
 	);
 
 	return {
@@ -373,8 +373,8 @@ function makeExpectedSchedule(users, sessions, schedule, comments = []) {
 		},
 		schedule: {
 			id: sessionSchedule.id,
-			userId: sessionSchedule.userId,
-			sessionId: sessionSchedule.sessionId,
+			user_id: sessionSchedule.user_id,
+			session_id: sessionSchedule.session_id,
 			date_created: sessionSchedule.date_created
 		}
 	};
@@ -382,9 +382,9 @@ function makeExpectedSchedule(users, sessions, schedule, comments = []) {
 
 // pass in testUsers, testSessions[0], testComments
 function makeExpectedComment(users, session, comments = []) {
-	const comment = comments.filter(comment => comment.sessionId === session.id);
+	const comment = comments.filter(comment => comment.session_id === session.id);
 
-	const user = users.find(user => user.id === comment.userId);
+	const user = users.find(user => user.id === comment.user_id);
 
 	return {
 		id: comment.id,
@@ -406,8 +406,8 @@ function makeExpectedComment(users, session, comments = []) {
 function makeMaliciousComment(user, session) {
 	const maliciousComment = {
 		id: 911,
-		userId: user.id,
-		sessionId: session.id,
+		user_id: user.id,
+		session_id: session.id,
 		date_created: new Date(),
 		text: 'Naughty naughty very naughty <script>alert("xss");</script>',
 		rating: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`
@@ -479,7 +479,7 @@ function seedMaliciousComment(db, user, comment) {
 }
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
-	const token = jwt.sign({ userId: user.id }, secret, {
+	const token = jwt.sign({ user_id: user.id }, secret, {
 		subject: user.username,
 		algorithm: 'HS256'
 	});

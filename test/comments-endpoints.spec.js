@@ -121,7 +121,7 @@ describe('Comments Endpoints', function() {
 				text: 'Test New Comment',
 				rating: 1,
 				sessionId: sessionId,
-				userId: userId
+				user_id: user_id
 			};
 			return supertest(app)
 				.post(`/api/sessions/${sessionId}/comments/`)
@@ -133,7 +133,7 @@ describe('Comments Endpoints', function() {
 					expect(res.body.text).to.eql(newComment.text);
 					expect(res.body.rating).to.eql(newComment.rating);
 					expect(res.body.sessionId).to.eql(newComment.sessionId);
-					expect(res.body.userId).to.eql(newComment.userId);
+					expect(res.body.user_id).to.eql(newComment.user_id);
 					expect(res.headers.location).to.eql(
 						`/api/sessions/${sessionId}/comments/${res.body.id}`
 					);
@@ -144,14 +144,14 @@ describe('Comments Endpoints', function() {
 		const requiredFields = ['text', 'rating'];
 
 		requiredFields.forEach(field => {
-			let userId = testUsers[0].id;
+			let user_id = testUsers[0].id;
 			let sessionId = testSessions[0].id;
 
 			const newComment = {
 				text: 'Test new comment',
 				rating: 3,
 				sessionId: sessionId,
-				userId: userId
+				user_id: user_id
 			};
 
 			it(`responds with 400 and an error message when the '${field}' is missing`, () => {

@@ -24,8 +24,8 @@ const sessionService = {
 				'com.date_created',
 				...userFields
 			)
-			.where('com.sessionId', sessionId)
-			.leftJoin('users AS usr', 'com.userid', 'usr.id')
+			.where('com.session_id', sessionId)
+			.leftJoin('users AS usr', 'com.user_id', 'usr.id')
 			.groupBy('com.id', 'usr.id');
 	},
 
@@ -80,7 +80,7 @@ const sessionService = {
 			id: commentData.id,
 			text: xss(commentData.text),
 			rating: xss(commentData.rating),
-			sessionId: commentData.sessionId,
+			session_id: commentData.session_id,
 			user: commentData.user || {},
 			date_created: commentData.date_created
 		};

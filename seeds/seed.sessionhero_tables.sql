@@ -147,14 +147,14 @@ VALUES
 ,('Vendor Session','thu','8/8/2019','14:15:00','14:45:00','Sun Ballroom','VEN04','Who Wants to Be a FileMaker Developer?','The FileMaker Developer Conference consistently offers great networking and awesome learning opportunities year after year. Take a break from the seriousness, and join the Cross team and host Regis Fill-in for some trivia fun! Test your knowledge on topics ranging from the FileMaker Platform to Disney to Geek Culture. Visit the Cross booth to sign up for a chance to take your turn in the hot seat. If you prefer, simply join the “studio” audience to cheer on the contestants as each question gets progressively harder, and to offer your insight when a life line is needed. Everyone in attendance is eligible to win one of our special prizes.  This is your chance to have some fun, test your FileMaker knowledge, and meet the Cross team!',NULL,NULL,NULL,NULL,NULL,'D. Todd Weller (Cross IT Services & Solutions, LLC)');
 
 
-INSERT INTO schedule (id, sessionId, userId)
+INSERT INTO schedule (id, session_id, user_id)
 VALUES
  (1,'BUS04',1)
 ,(2,'CRE12',1)
 ,(3,'TRA08',1);
 
 
-INSERT INTO comments (id, text, rating, date_created, sessionId, userId)
+INSERT INTO comments (id, text, rating, date_created, session_id, user_id)
 VALUES
  (1,'This thing is amazing.',4,'2019-10-31 23:14:12.649275','BUS04',1)
 ,(2,'Put a bird on it!',4,'2019-10-31 23:14:12.649275','BUS04',1)

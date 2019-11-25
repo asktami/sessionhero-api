@@ -6,7 +6,7 @@ const commentService = {
 		return knex
 			.from(table)
 			.select('*')
-			.leftJoin('users', 'comments.userId', 'user.id')
+			.leftJoin('users', 'comments.user_id', 'user.id')
 			.where('comments.id', id)
 			.first();
 	},
@@ -40,8 +40,8 @@ const commentService = {
 			id: comment.id,
 			rating: comment.rating,
 			text: xss(comment.text),
-			sessionId: comment.sessionId,
-			userId: comment.userId,
+			session_id: comment.session_id,
+			user_id: comment.user_id,
 			date_created: comment.date_created,
 			date_modified: comment.date_modified,
 			user: comment.user || {}

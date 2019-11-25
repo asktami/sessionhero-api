@@ -43,16 +43,16 @@ scheduleRouter
 			.catch(next);
 	});
 
-// add session to schedule, with loginUserId + sessionId
+// add session to schedule, with loginUserId + session_id
 scheduleRouter
 	.route('/')
 	.all(requireAuth)
 	.post(requireAuth, jsonBodyParser, (req, res, next) => {
-		const { sessionId } = req.body;
-		const newScheduleItem = { sessionId };
+		const { session_id } = req.body;
+		const newScheduleItem = { session_id };
 		const knexInstance = req.app.get('db');
 
-		for (const field of ['sessionId']) {
+		for (const field of ['session_id']) {
 			if (!req.body[field]) {
 				logger.error({
 					message: `${field} is required`,
@@ -68,7 +68,7 @@ scheduleRouter
 
 		// req.user is set in middleware/basic-auth
 		// this is the login user id
-		newScheduleItem.userid = req.user.id;
+		newScheduleItem.user_id = req.user.id;
 
 		scheduleService
 			.insertSchedule(knexInstance, newScheduleItem)

@@ -24,8 +24,8 @@ const jsonBodyParser = express.json();
 // all endpoints are protected
 // requireAuth is how we capture loggedId userId = req.user.id
 commentRouter.post(requireAuth, jsonBodyParser, (req, res, next) => {
-	const { text, rating, sessionId } = req.body;
-	const newComment = { text, rating, sessionId };
+	const { text, rating, session_id } = req.body;
+	const newComment = { text, rating, session_id };
 	const knexInstance = req.app.get('db');
 
 	for (const [key, value] of Object.entries(newComment))
@@ -54,8 +54,8 @@ commentRouter.post(requireAuth, jsonBodyParser, (req, res, next) => {
 	}
 
 	// req.user is set in middleware/basic-auth
-	// this is the login userId used to post comments
-	newComment.userId = req.user.id;
+	// this is the login user_id used to post comments
+	newComment.user_id = req.user.id;
 
 	commentService
 		.insertComment(knexInstance, newComment)

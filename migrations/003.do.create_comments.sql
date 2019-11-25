@@ -4,8 +4,8 @@ CREATE TABLE comments (
     rating INTEGER NOT NULL,
     date_created TIMESTAMP DEFAULT now() NOT NULL,
     date_modified TIMESTAMP DEFAULT now() NOT NULL,
-    sessionId VARCHAR
+    session_id VARCHAR
         REFERENCES sessions(id) ON DELETE CASCADE NOT NULL,
-    userId INTEGER
+    user_id INTEGER
         REFERENCES users(id) ON DELETE CASCADE NOT NULL
 );
