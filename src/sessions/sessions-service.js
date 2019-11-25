@@ -5,7 +5,12 @@ let table = 'sessions';
 
 const sessionService = {
 	getAllSessions(db) {
-		return db.select('sessions.*').from(table);
+		return db
+			.select('sessions.*')
+			.from(table)
+			.orderBy('date', 'asc')
+			.orderBy('time_start', 'asc')
+			.orderBy('track', 'asc');
 	},
 	getById(db, id) {
 		return sessionService
