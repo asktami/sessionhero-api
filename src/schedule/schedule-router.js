@@ -14,10 +14,10 @@ const jsonBodyParser = express.json();
 
 // get all schedule records for loginUserId
 scheduleRouter
-	.route('/')
+	.route('/users/:loginUserId')
 	.all(requireAuth)
 	.get((req, res, next) => {
-		const loginUserId = req.user.id;
+		const { loginUserId } = req.params;
 		const knexInstance = req.app.get('db');
 
 		scheduleService

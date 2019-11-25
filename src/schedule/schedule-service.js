@@ -5,14 +5,15 @@ const scheduleService = {
 	// TBD
 	// get schedule records for loggedIn users, join to user table and session table
 	getAllSchedule(knex, loginUserId) {
-		return knex
-			.raw(
-				`select * from schedule
+		return knex.raw(
+			`select * from schedule
 			left join sessions on schedule.sessionid = sessions.id
 			left join users on schedule.userid = users.id
-			order by sessions.date, sessions.time_star`
-			)
-			.where('userid', loginUserId);
+			where schedule.userid = :loginUserId
+			order by sessions.date, sessions.time_start`,
+			{ loginUserId: loginUserId }
+		);
+		// .where({ userid: loginUserId });
 	},
 
 	insertSchedule(knex, newScheduleItem) {
