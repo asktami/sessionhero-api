@@ -4,21 +4,50 @@ const logger = require('../logger');
 
 const scheduleService = require('./schedule-service');
 
+// for protected endpoints
+const { requireAuth } = require('../middleware/jwt-auth');
+
 const scheduleRouter = express.Router();
 const jsonBodyParser = express.json();
 
+// all endpoints are protected
+
+// get all schedule records for loginUserId
 scheduleRouter
 	.route('/')
+	.all(requireAuth)
 	.get((req, res, next) => {
+		const loginUserId = req.user.id;
 		const knexInstance = req.app.get('db');
+
 		scheduleService
-			.getAllSchedule(knexInstance)
+			.getAllSchedule(knexInstance, loginUserId)
 			.then(schedule => {
-				res.json(schedule.map(scheduleService.serializeSchedule(schedule)));
+				if (!schedule) {
+					console.log('schedule not found');
+					logger.error({
+						message: `Schedule with for loginUserId ${loginUserId} not found.`,
+						request: `${req.originalUrl}`,
+						method: `${req.method}`,
+						ip: `${req.ip}`
+					});
+					return res.status(404).json({
+						error: {
+							message: `Schedule with for loginUserId ${loginUserId} not found.`
+						}
+					});
+				}
+
+				res.json(schedule.map(scheduleService.serializeSchedule));
 			})
 			.catch(next);
-	})
-	.post(jsonBodyParser, (req, res, next) => {
+	});
+
+// add session to schedule, with loginUserId + sessionId
+scheduleRouter
+	.route('/')
+	.all(requireAuth)
+	.post(requireAuth, jsonBodyParser, (req, res, next) => {
 		const { sessionId } = req.body;
 		const newScheduleItem = { sessionId };
 		const knexInstance = req.app.get('db');
@@ -36,6 +65,10 @@ scheduleRouter
 				});
 			}
 		}
+
+		// req.user is set in middleware/basic-auth
+		// this is the login user id
+		newScheduleItem.userid = req.user.id;
 
 		scheduleService
 			.insertSchedule(knexInstance, newScheduleItem)
@@ -56,6 +89,7 @@ scheduleRouter
 
 scheduleRouter
 	.route('/:id')
+	.all(requireAuth)
 	.all((req, res, next) => {
 		const { id } = req.params;
 		const knexInstance = req.app.get('db');

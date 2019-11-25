@@ -83,19 +83,19 @@ psql -U sessionhero -d sessionhero-test -a -f seeds/trunc.sessionhero_tables.sql
 
 ## Endpoints
 
-| Endpoint              | HTTP Method | CRUD Method | Result                         |
-| --------------------- | ----------- | ----------- | ------------------------------ |
-| sessions              | GET         | READ        | get all sessions               |
-| sessions/:id          | GET         | READ        | get single session             |
-| sessions/:id/comments | GET         | READ        | get all comments for a session |
-| sessions/:id/comments | POST        | CREATE      | add new comment for a session  |
-| comments/:id          | GET         | READ        | get single comment             |
-| comments/:id          | PATCH       | UPDATE      | update single comment          |
-| comments/:id          | DELETE      | DELETE      | delete single comment          |
-| schedule              | GET         | READ        | get all scehdule records       |
-| schedule/:idSession   | POST        | CREATE      | add new session to schedule    |
-| schedule/:idSchedule  | DELETE      | DELETE      | delete session from schedule   |
-| users                 | POST        | CREATE      | add new user                   |
+| Endpoint              | HTTP Method | CRUD Method | Result                                     |
+| --------------------- | ----------- | ----------- | ------------------------------------------ |
+| sessions              | GET         | READ        | get all sessions                           |
+| sessions/:id          | GET         | READ        | get single session                         |
+| sessions/:id/comments | GET         | READ        | get all comments for a session             |
+| sessions/:id/comments | POST        | CREATE      | add new comment for a session              |
+| comments/:id          | GET         | READ        | get single comment                         |
+| comments/:id          | PATCH       | UPDATE      | update single comment                      |
+| comments/:id          | DELETE      | DELETE      | delete single comment                      |
+| schedule/users/:id    | GET         | READ        | get all scehdule records for a single user |
+| schedule              | POST        | CREATE      | add new session to schedule                |
+| schedule/:id          | DELETE      | DELETE      | delete session from schedule               |
+| users                 | POST        | CREATE      | add new user                               |
 
 ## Scripts
 

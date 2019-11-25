@@ -4,13 +4,15 @@ let table = 'schedule';
 const scheduleService = {
 	// TBD
 	// get schedule records for loggedIn users, join to user table and session table
-	getAllSchedule(knex, userId) {
+	getAllSchedule(knex, loginUserId) {
 		return knex
-			.from(table)
-			.select('*')
-			.leftJoin('users', 'schedule.userId', 'users.id')
-			.leftJoin('sessions', 'schedule.sessionId', 'sessions.id')
-			.where('userId', userId);
+			.raw(
+				`select * from schedule
+			left join sessions on schedule.sessionid = sessions.id
+			left join users on schedule.userid = users.id
+			order by sessions.date, sessions.time_star`
+			)
+			.where('userid', loginUserId);
 	},
 
 	insertSchedule(knex, newScheduleItem) {
