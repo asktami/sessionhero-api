@@ -70,11 +70,11 @@ describe('Auth Endpoints', function() {
 				username: testUser.username,
 				password: testUser.password
 			};
-			// TBD what is  userId here ???
+			// TBD what is  user_id here ???
 			// is it what's returned from db assigned to whatever I decide???
-			// how do I return logged in userId to my client???
+			// how do I return logged in user_id to my client???
 			const expectedToken = jwt.sign(
-				{ userId: testUser.id },
+				{ user_id: testUser.id },
 				process.env.JWT_SECRET,
 				{
 					subject: testUser.username,
@@ -95,12 +95,12 @@ describe('Auth Endpoints', function() {
 		beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
 
 		it(`responds 200 and JWT auth token using secret`, () => {
-			// TBD what is userId here ???
+			// TBD what is user_id here ???
 			// is it what's returned from db assigned to whatever I decide???
-			// how do I return logged in userId to my client???
+			// how do I return logged in user_id to my client???
 
 			const expectedToken = jwt.sign(
-				{ userId: testUser.id },
+				{ user_id: testUser.id },
 				process.env.JWT_SECRET,
 				{
 					subject: testUser.username,

@@ -22,12 +22,14 @@ function requireAuth(req, res, next) {
 	);
 
 	if (!tokenUserName || !tokenPassword) {
+		console.log('basic-auth');
 		return res.status(401).json({ error: 'Unauthorized request' });
 	}
 
 	// query the database for a user matching this username
 	// check if username not found or username found and password is incorrect
 	AuthService.getUserWithUserName(req.app.get('db'), tokenUserName)
+	console.log('basic-auth');
 		.then(user => {
 			if (!user) {
 				return res.status(401).json({ error: 'Unauthorized request' });
@@ -36,12 +38,14 @@ function requireAuth(req, res, next) {
 			return AuthService.comparePasswords(tokenPassword, user.password).then(
 				passwordsMatch => {
 					if (!passwordsMatch) {
-						return res.status(401).json({ error: 'Unauthorized request' });
+						return res
+							.status(401)
+							.json({ error: 'Unauthorized request basic-auth' });
 					}
 
 					req.user = user;
 
-					console.log('API basic-auth  = req.user.id = ', user.id);
+					console.log('API basic-auth req.user.id = ', req.user.id);
 
 					next();
 				}

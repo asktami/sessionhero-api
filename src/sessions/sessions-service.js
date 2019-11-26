@@ -19,15 +19,37 @@ const sessionService = {
 			console.log('********************');
 			console.log('********************');
 
-			return db
-				.select('*')
-				.from(table)
-				.where('schedule.user_id', loginUserId)
-				.leftJoin('schedule', 'sessions.id', 'schedule.session_id')
-				.leftJoin('users', 'users.id', 'schedule.user_id')
-				.orderBy('date', 'asc')
-				.orderBy('time_start', 'asc')
-				.orderBy('track', 'asc');
+			// return db(
+			// 	db(table)
+			// 		.select('sessions.*')
+			// 		.as('sessions')
+			// )
+			// 	.leftJoin(
+			// 		db('schedule')
+			// 			.select('schedule.*')
+			// 			.where('schedule.user_id', loginUserId)
+			// 			.as('schedule')
+			// 	)
+			// 	.on('sessions.id', 'schedule.session_id');
+
+			return (
+				db
+					.select(
+						'sessions.*',
+						'users.id as users_id',
+						'users.fullname',
+						'schedule.id as schedules_id',
+						'schedule.user_id',
+						'schedule.session_id'
+					)
+					.from(table)
+					.leftJoin('schedule', 'sessions.id', 'schedule.session_id')
+					.leftJoin('users', 'users.id', 'schedule.user_id')
+					// .where('schedule.user_id', loginUserId)
+					.orderBy('sessions.date', 'asc')
+					.orderBy('sessions.time_start', 'asc')
+					.orderBy('sessions.track', 'asc')
+			);
 		} else {
 			console.log('********************');
 			console.log('********************');
@@ -44,9 +66,9 @@ const sessionService = {
 			return db
 				.select('*')
 				.from(table)
-				.orderBy('date', 'asc')
-				.orderBy('time_start', 'asc')
-				.orderBy('track', 'asc');
+				.orderBy('sessions.date', 'asc')
+				.orderBy('sessions.time_start', 'asc')
+				.orderBy('sessions.track', 'asc');
 		}
 	},
 
@@ -61,10 +83,27 @@ const sessionService = {
 	},
 
 	getById(db, id) {
-		return sessionService
-			.getAllSessions(db)
+		// return sessionService
+		// 	.getAllSessions(db)
+		// 	.where('sessions.id', id)
+		// 	.first();
+
+		return db
+			.select(
+				'sessions.*',
+				'users.id as users_id',
+				'users.fullname',
+				'schedule.id as schedules_id',
+				'schedule.user_id',
+				'schedule.session_id'
+			)
+			.from(table)
+			.leftJoin('schedule', 'sessions.id', 'schedule.session_id')
+			.leftJoin('users', 'users.id', 'schedule.user_id')
 			.where('sessions.id', id)
-			.first();
+			.orderBy('sessions.date', 'asc')
+			.orderBy('sessions.time_start', 'asc')
+			.orderBy('sessions.track', 'asc');
 	},
 
 	getCommentsForSession(db, sessionId) {

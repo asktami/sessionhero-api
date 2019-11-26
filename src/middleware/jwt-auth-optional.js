@@ -3,12 +3,13 @@ const AuthService = require('../auth/auth-service');
 // NOTE the jwt token has the logged in user's username and is used to find the logged in user (via their username), then get their user_id from the database
 // then the
 
-function requireAuth(req, res, next) {
+function optionalAuth(req, res, next) {
 	const authToken = req.get('Authorization') || '';
 
 	let bearerToken;
 	if (!authToken.toLowerCase().startsWith('bearer ')) {
-		return res.status(401).json({ error: 'Missing bearer token' });
+		// return res.status(401).json({ error: 'Missing bearer token' });
+		return;
 	} else {
 		bearerToken = authToken.slice(7, authToken.length);
 	}
@@ -19,7 +20,9 @@ function requireAuth(req, res, next) {
 		AuthService.getUserWithUserName(req.app.get('db'), payload.sub)
 			.then(user => {
 				if (!user)
-					return res.status(401).json({ error: 'Unauthorized request' });
+					//	return res.status(401).json({ error: 'Unauthorized request' });
+
+					return;
 
 				// NOTE: successfully found logged in user is added to req object
 				// this means we can get the logged in user's id from req.user.id
@@ -42,10 +45,10 @@ function requireAuth(req, res, next) {
 				next(err);
 			});
 	} catch (error) {
-		res.status(401).json({ error: error + '(Unauthorized request)' });
+		res.status(401).json({ error: error + ' (Unauthorized request)' });
 	}
 }
 
 module.exports = {
-	requireAuth
+	optionalAuth
 };

@@ -151,7 +151,9 @@ INSERT INTO schedule (id, session_id, user_id)
 VALUES
  (1,'BUS04',1)
 ,(2,'CRE12',1)
-,(3,'TRA08',1);
+,(3,'TRA08',1)
+,(3,'TRA02',1)
+,(4,'TRA02',2);
 
 
 INSERT INTO comments (id, text, rating, date_created, session_id, user_id)
