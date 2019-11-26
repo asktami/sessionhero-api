@@ -12,12 +12,15 @@ const jsonBodyParser = express.json();
 
 // all endpoints are protected
 
-// get all schedule records for loginUserId
 scheduleRouter
-	.route('/users/:loginUserId')
+	.route('/')
 	.all(requireAuth)
 	.get((req, res, next) => {
-		const { loginUserId } = req.params;
+		// get all schedule records for loginUserId
+
+		// here we will ALWAYS have the loginUserId because the client makes this request with the Auhorization Header containing the AuthToken used by jwt-auth to find the logged in user's user record
+
+		const { loginUserId } = req.user.id; // from jwt-auth
 		const knexInstance = req.app.get('db');
 
 		scheduleService

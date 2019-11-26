@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs');
 const AuthService = require('../auth/auth-service');
 
 function requireAuth(req, res, next) {
@@ -42,8 +41,7 @@ function requireAuth(req, res, next) {
 
 					req.user = user;
 
-					console.log('TBD req.user = ', user);
-					console.log('TBD logged in userId = req.user.id = ', user.id);
+					console.log('API basic-auth  = req.user.id = ', user.id);
 
 					next();
 				}

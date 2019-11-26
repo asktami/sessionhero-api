@@ -29,10 +29,10 @@ sessionRouter
 	.all(requireAuth)
 	.all(checkSessionExists)
 	.all((req, res, next) => {
-		const { id } = req.params;
+		const { sessionId } = req.params;
 		const knexInstance = req.app.get('db');
 		sessionService
-			.getById(knexInstance, id)
+			.getById(knexInstance, sessionId)
 			.then(session => {
 				res.session = session;
 				next();
@@ -49,11 +49,11 @@ sessionRouter
 	.all(requireAuth)
 	.all(checkSessionExists)
 	.get((req, res, next) => {
-		const { id } = req.params;
+		const { sessionId } = req.params;
 		const knexInstance = req.app.get('db');
 
 		sessionService
-			.getCommentsForSession(knexInstance, id)
+			.getCommentsForSession(knexInstance, sessionId)
 			.then(comments => {
 				res.json(comments.map(sessionService.serializeSessionComments));
 			})
