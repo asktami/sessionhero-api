@@ -76,8 +76,11 @@ sessionRouter
 		sessionService
 			.getCommentsForSession(knexInstance, id)
 			.then(comments => {
+				console.log('---------- sessions-router comments = ', comments);
 				// res.json(comments.map(comments));
-				res.json(comments.map(sessionService.serializeSessionComments));
+				// res.json(comments.map(sessionService.serializeSessionComments));
+
+				res.json(comments);
 			})
 			.catch(next);
 	});
