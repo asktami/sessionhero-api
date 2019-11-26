@@ -60,8 +60,8 @@ sessionRouter
 			.catch(next);
 	})
 	.get((req, res) => {
-		// res.json(res.session);
-		res.json(sessionService.serializeSession);
+		res.json(res.session);
+		// res.json(sessionService.serializeSession);
 	});
 
 // protected endpoint

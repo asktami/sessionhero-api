@@ -1,112 +1,34 @@
 // methods to store database transactions
 const xss = require('xss');
-// const Treeize = require('treeize');
+const Treeize = require('treeize');
 let table = 'sessions';
 
 const sessionService = {
-	getAllSessions(db, loginUserId) {
-		console.log('LOGIN USER ID = ', loginUserId);
-		if (loginUserId) {
-			console.log('********************');
-			console.log('********************');
-
-			console.log('******************** sessions WITH id = ');
-
-			var ts = new Date();
-			console.log(ts.toDateString());
-			console.log(ts.toTimeString());
-
-			console.log('********************');
-			console.log('********************');
-
-			// return db(
-			// 	db(table)
-			// 		.select('sessions.*')
-			// 		.as('sessions')
-			// )
-			// 	.leftJoin(
-			// 		db('schedule')
-			// 			.select('schedule.*')
-			// 			.where('schedule.user_id', loginUserId)
-			// 			.as('schedule')
-			// 	)
-			// 	.on('sessions.id', 'schedule.session_id');
-
-			return (
-				db
-					.select(
-						'sessions.*',
-						'users.id as users_id',
-						'users.fullname',
-						'schedule.id as schedules_id',
-						'schedule.user_id',
-						'schedule.session_id'
-					)
-					.from(table)
-					.leftJoin('schedule', 'sessions.id', 'schedule.session_id')
-					.leftJoin('users', 'users.id', 'schedule.user_id')
-					// .where('schedule.user_id', loginUserId)
-					.orderBy('sessions.date', 'asc')
-					.orderBy('sessions.time_start', 'asc')
-					.orderBy('sessions.track', 'asc')
-			);
-		} else {
-			console.log('********************');
-			console.log('********************');
-
-			console.log('******************** sessions without id = ');
-
-			var ts = new Date();
-			console.log(ts.toDateString());
-			console.log(ts.toTimeString());
-
-			console.log('********************');
-			console.log('********************');
-
-			return db
-				.select('*')
-				.from(table)
-				.orderBy('sessions.date', 'asc')
-				.orderBy('sessions.time_start', 'asc')
-				.orderBy('sessions.track', 'asc');
-		}
-	},
-
-	// get schedule records for logInUserId, join to user table and session table
-	getAllSessionsXXX(knex, loginUserId) {
-		return knex
+	getAllSessions(db) {
+		return db
 			.select('*')
 			.from(table)
-			.leftJoin('schedule', 'sessions.id', 'schedule.session_id')
-			.leftJoin('users', 'users.id', 'schedule.user_id')
-			.where('schedule.user_id', loginUserId);
+			.orderBy('date', 'asc')
+			.orderBy('time_start', 'asc')
+			.orderBy('track', 'asc');
 	},
 
 	getById(db, id) {
+		console.log('got here - sessions-service getById = ', id);
+
 		// return sessionService
 		// 	.getAllSessions(db)
 		// 	.where('sessions.id', id)
 		// 	.first();
 
 		return db
-			.select(
-				'sessions.*',
-				'users.id as users_id',
-				'users.fullname',
-				'schedule.id as schedules_id',
-				'schedule.user_id',
-				'schedule.session_id'
-			)
+			.select('*')
 			.from(table)
-			.leftJoin('schedule', 'sessions.id', 'schedule.session_id')
-			.leftJoin('users', 'users.id', 'schedule.user_id')
-			.where('sessions.id', id)
-			.orderBy('sessions.date', 'asc')
-			.orderBy('sessions.time_start', 'asc')
-			.orderBy('sessions.track', 'asc');
+			.where('id', id)
+			.first();
 	},
 
-	getCommentsForSession(db, sessionId) {
+	getCommentsForSession(db, id) {
 		return db
 			.from('comments AS com')
 			.select(
@@ -114,9 +36,10 @@ const sessionService = {
 				'com.rating',
 				'com.text',
 				'com.date_created',
-				...userFields
+				'usr.id as users.id',
+				'usr.username'
 			)
-			.where('com.session_id', sessionId)
+			.where('com.session_id', id)
 			.leftJoin('users AS usr', 'com.user_id', 'usr.id')
 			.groupBy('com.id', 'usr.id');
 	},
@@ -161,31 +84,41 @@ const sessionService = {
 		return comments.map(this.serializeSessionComment);
 	},
 
+	// serializeSessionComment(comment) {
+	// 	const commentTree = new Treeize();
+
+	// 	// Some light hackiness to allow for the fact that `treeize`
+	// 	// only accepts arrays of objects, and we want to use a single
+	// 	// object.
+	// 	const commentData = commentTree.grow([comment]).getData()[0];
+
+	// 	return {
+	// 		id: commentData.id,
+	// 		text: xss(commentData.text),
+	// 		rating: xss(commentData.rating),
+	// 		session_id: commentData.session_id,
+	// 		user: commentData.user || {},
+	// 		date_created: commentData.date_created
+	// 	};
+	// }
+
 	serializeSessionComment(comment) {
-		const commentTree = new Treeize();
-
-		// Some light hackiness to allow for the fact that `treeize`
-		// only accepts arrays of objects, and we want to use a single
-		// object.
-		const commentData = commentTree.grow([comment]).getData()[0];
-
-		return {
-			id: commentData.id,
-			text: xss(commentData.text),
-			rating: xss(commentData.rating),
-			session_id: commentData.session_id,
-			user: commentData.user || {},
-			date_created: commentData.date_created
-		};
+		return comment;
+		// const { user } = comment;
+		// return {
+		// 	id: comment.id,
+		// 	text: xss(comment.text),
+		// 	session_id: comment.session_id,
+		// 	date_created: new Date(comment.date_created),
+		// 	user: {
+		// 		id: user.id,
+		// 		user_name: user.username,
+		// 		full_name: user.fullname,
+		// 		date_created: new Date(user.date_created),
+		// 		date_modified: new Date(user.date_modified) || null
+		// 	}
+		// };
 	}
 };
-
-const userFields = [
-	'usr.id AS user:id',
-	'usr.user_name AS user:username',
-	'usr.full_name AS user:fullname',
-	'usr.date_created AS user:date_created',
-	'usr.date_modified AS user:date_modified'
-];
 
 module.exports = sessionService;
