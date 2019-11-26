@@ -1,17 +1,65 @@
 // methods to store database transactions
 const xss = require('xss');
-const Treeize = require('treeize');
+// const Treeize = require('treeize');
 let table = 'sessions';
 
 const sessionService = {
-	getAllSessions(db) {
-		return db
-			.select('sessions.*')
-			.from(table)
-			.orderBy('date', 'asc')
-			.orderBy('time_start', 'asc')
-			.orderBy('track', 'asc');
+	getAllSessions(db, loginUserId) {
+		console.log('LOGIN USER ID = ', loginUserId);
+		if (loginUserId) {
+			console.log('********************');
+			console.log('********************');
+
+			console.log('******************** sessions WITH id = ');
+
+			var ts = new Date();
+			console.log(ts.toDateString());
+			console.log(ts.toTimeString());
+
+			console.log('********************');
+			console.log('********************');
+
+			return db
+				.select('*')
+				.from(table)
+				.where('schedule.user_id', loginUserId)
+				.leftJoin('schedule', 'sessions.id', 'schedule.session_id')
+				.leftJoin('users', 'users.id', 'schedule.user_id')
+				.orderBy('date', 'asc')
+				.orderBy('time_start', 'asc')
+				.orderBy('track', 'asc');
+		} else {
+			console.log('********************');
+			console.log('********************');
+
+			console.log('******************** sessions without id = ');
+
+			var ts = new Date();
+			console.log(ts.toDateString());
+			console.log(ts.toTimeString());
+
+			console.log('********************');
+			console.log('********************');
+
+			return db
+				.select('*')
+				.from(table)
+				.orderBy('date', 'asc')
+				.orderBy('time_start', 'asc')
+				.orderBy('track', 'asc');
+		}
 	},
+
+	// get schedule records for logInUserId, join to user table and session table
+	getAllSessionsXXX(knex, loginUserId) {
+		return knex
+			.select('*')
+			.from(table)
+			.leftJoin('schedule', 'sessions.id', 'schedule.session_id')
+			.leftJoin('users', 'users.id', 'schedule.user_id')
+			.where('schedule.user_id', loginUserId);
+	},
+
 	getById(db, id) {
 		return sessionService
 			.getAllSessions(db)
@@ -39,34 +87,35 @@ const sessionService = {
 	},
 
 	serializeSession(session) {
-		const sessionTree = new Treeize();
+		return session;
+		//const sessionTree = new Treeize();
 
 		// Some light hackiness to allow for the fact that `treeize`
 		// only accepts arrays of objects, and we want to use a single
 		// object.
-		const sessionData = sessionTree.grow([session]).getData()[0];
+		// const sessionData = sessionTree.grow([session]).getData()[0];
 
-		return {
-			id: sessionData.id,
-			track: sessionData.track,
-			day: sessionData.day,
-			date: sessionData.date,
-			time_start: sessionData.time_start,
-			time_end: sessionData.time_end,
-			location: sessionData.location,
-			name: sessionData.name,
-			description: sessionData.description,
-			background: sessionData.background,
-			objective_1: sessionData.objective_1,
-			objective_2: sessionData.objective_2,
-			objective_3: sessionData.objective_3,
-			objective_4: sessionData.objective_4,
-			speaker: sessionData.speaker,
-			// user: sessionData.user || {},
-			number_of_comments: Number(sessionData.number_of_comments) || 0,
-			average_comment_rating:
-				Math.round(sessionData.average_comment_rating) || 0
-		};
+		// return {
+		// 	id: sessionData.id,
+		// 	track: sessionData.track,
+		// 	day: sessionData.day,
+		// 	date: sessionData.date,
+		// 	time_start: sessionData.time_start,
+		// 	time_end: sessionData.time_end,
+		// 	location: sessionData.location,
+		// 	name: sessionData.name,
+		// 	description: sessionData.description,
+		// 	background: sessionData.background,
+		// 	objective_1: sessionData.objective_1,
+		// 	objective_2: sessionData.objective_2,
+		// 	objective_3: sessionData.objective_3,
+		// 	objective_4: sessionData.objective_4,
+		// 	speaker: sessionData.speaker,
+		// 	// user: sessionData.user || {},
+		// 	number_of_comments: Number(sessionData.number_of_comments) || 0,
+		// 	average_comment_rating:
+		// 		Math.round(sessionData.average_comment_rating) || 0
+		// };
 	},
 
 	serializeSessionComments(comments) {
@@ -92,7 +141,6 @@ const sessionService = {
 	}
 };
 
-// TBD why is there a colon?
 const userFields = [
 	'usr.id AS user:id',
 	'usr.user_name AS user:username',

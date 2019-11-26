@@ -12,8 +12,24 @@ const sessionRouter = express.Router();
 // UNprotected endpoint (getAllSessions)
 sessionRouter.route('/').get((req, res, next) => {
 	const knexInstance = req.app.get('db');
+
+	// loginUserId will only exist after login
+	//in sessions-service IF have loginUserId, use it, otherwise get all schedule records?
+	// loginUserId from jwt-auth
+	let loginUserId = '';
+
+	if (req.user !== undefined) {
+		loginUserId = req.user.id;
+	}
+
+	console.log('********************');
+	console.log('********************');
+
+	console.log('req.user = ', req.user);
+	console.log('sessions-router LOGIN USER ID = ', loginUserId);
+
 	sessionService
-		.getAllSessions(knexInstance)
+		.getAllSessions(knexInstance, loginUserId)
 		.then(sessions => {
 			// NOTE: this is the same as:
 			// res.json(

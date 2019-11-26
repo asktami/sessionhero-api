@@ -1,32 +1,77 @@
-// methods to store database transactions
 let table = 'schedule';
 
 const scheduleService = {
-	// TBD
 	// get schedule records for logInUserId, join to user table and session table
 	getSchedule(knex, loginUserId) {
-		// return knexInstance('schedule')
-		// 	.leftJoin('sessions', 'schedule.session_id', 'sessions.id')
-		// 	.leftJoin('users', 'schedule.user_id', 'users.id')
-		// 	.where('schedule.user_id', loginUserId);
-
+		console.log('SCHEDULE LOGIN USER ID = ', loginUserId);
 		return knex
-			.select('*')
+			.select(
+				'schedule.id',
+				'session_id',
+				'user_id',
+				'track',
+				'day',
+				'date',
+				'time_start',
+				'time_end',
+				'location',
+				'name',
+				'description',
+				'background',
+				'objective_1',
+				'objective_2',
+				'objective_3',
+				'objective_4',
+				'speaker',
+				'fullname'
+			)
 			.from(table)
 			.leftJoin('sessions', 'sessions.id', 'schedule.session_id')
 			.leftJoin('users', 'users.id', 'schedule.user_id')
 			.where('schedule.user_id', loginUserId);
-		// return knex
-		// 	.raw(
-		// 		`select * from schedule
-		// 		left join sessions on schedule.session_id = sessions.id
-		// 		left join users on schedule.user_id = users.id
-		// 		where schedule.user_id = :loginUserId
-		// 		order by sessions.date, sessions.time_start`,
-		// 		{ loginUserId: loginUserId }
-		// 	)
-		// 	.then(result => (result ? result.rows : result));
 	},
+
+	// getScheduleXXX(knex, loginUserId) {
+	// 	return knex
+	// 		.from('schedule')
+	// 		.select(
+	// 			'schedule.id',
+	// 			'schedule.session_id',
+	// 			'schedule.user_id',
+	// 			knex.raw(
+	// 				`json_strip_nulls(
+	// 			json_build_object(
+	// 				'track', sessions.track,
+	// 				'day,' sessions.day,
+	// 				'date', sessions.date,
+	// 				'time_start', sessions.time_start,
+	// 				'time_end', sessions.time_end,
+	// 				'location', sessions.location,
+	// 				'name', sessions.name,
+	// 				'description', sessions.description,
+	// 				'background', sessions.background,
+	// 				'objective_1', sessions.objective_1,
+	// 				'objective_2', sessions.objective_2,
+	// 				'objective_3', sessions.objective_3,
+	// 				'objective_4', sessions.objective_4,
+	// 				'speaker', sessions.speaker
+	// 			)
+	// 		  ) AS "sessions"`
+	// 			),
+	// 			knex.raw(
+	// 				`json_strip_nulls(
+	// 			json_build_object(
+	// 			  'id', users.id,
+	// 			  'username', users.username,
+	// 			  'fullname', users.fullname,
+	// 			)
+	// 		  ) AS "users"`
+	// 			)
+	// 		)
+	// 		.where('schedule.user_id', loginUserId)
+	// 		.leftJoin('sessions', 'sessions.id', 'schedule.session_id')
+	// 		.leftJoin('users', 'users.id', 'schedule.user_id');
+	// },
 
 	insertSchedule(knex, newScheduleItem) {
 		return knex
@@ -50,36 +95,58 @@ const scheduleService = {
 			.delete();
 	},
 
-	// TBD HOW to return a serialized JOIN with users and sessions?
-	// AND - do I need to???
-	// record returned after successful insert/update
+	// record returned after successful Read/Create/Update
 	serializeSchedule(schedule) {
-		return {
-			id: schedule.id,
-			session_id: schedule.session_id,
-			user_id: schedule.user_id
-		};
+		// console.log('schedule = ', schedule);
+		// const { sessions, users } = schedule;
+
+		return schedule;
+		// return {
+		// 	id: schedule.id,
+		// 	session_id: schedule.session_id,
+		// 	user_id: schedule.user_id,
+		// 	sessions: {
+		// 		track: sessions.track,
+		// 		day: sessions.day,
+		// 		date: sessions.date,
+		// 		time_start: sessions.time_start,
+		// 		time_end: sessions.time_end,
+		// 		location: sessions.location,
+		// 		name: sessions.name,
+		// 		description: sessions.description,
+		// 		background: sessions.background,
+		// 		objective_1: sessions.objective_1,
+		// 		objective_2: sessions.objective_2,
+		// 		objective_3: sessions.objective_3,
+		// 		objective_4: sessions.objective_4,
+		// 		speaker: sessions.speaker
+		// 	},
+		// 	users: {
+		// 		fullname: users.fullname,
+		// 		username: users.username
+		// 	}
+		// };
 	}
 };
 
 // const userFields = ['usr.id AS user:id', 'usr.fullname AS user:fullname'];
 
 // const sessionFields = [
-// 	session.id,
-// 	session.track,
-// 	session.day,
-// 	session.date,
-// 	session.time_start,
-// 	session.time_end,
-// 	session.location,
-// 	session.name,
-// 	session.description,
-// 	session.background,
-// 	session.objective_1,
-// 	session.objective_2,
-// 	session.objective_3,
-// 	session.objective_4,
-// 	xsession.speaker
+// 	'sessions:id',
+// 	'sessions:track',
+// 	'sessions:day',
+// 	'sessions:date',
+// 	'sessions:time_start',
+// 	'sessions:time_end',
+// 	'sessions:location',
+// 	'sessions:name',
+// 	'sessions:description',
+// 	'sessions:background',
+// 	'sessions:objective_1',
+// 	'sessions:objective_2',
+// 	'sessions:objective_3',
+// 	'sessions:objective_4',
+// 	'sessions:speaker'
 // ];
 
 module.exports = scheduleService;

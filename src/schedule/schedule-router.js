@@ -23,6 +23,9 @@ scheduleRouter
 		const loginUserId = req.user.id; // from jwt-auth
 		const knexInstance = req.app.get('db');
 
+		console.log('req.user = ', req.user);
+		console.log('schedule-router LOGIN USER ID = ', loginUserId);
+
 		scheduleService
 			.getSchedule(knexInstance, loginUserId)
 			.then(schedule => {
