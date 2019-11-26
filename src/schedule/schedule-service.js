@@ -4,11 +4,7 @@ let table = 'schedule';
 const scheduleService = {
 	// TBD
 	// get schedule records for logInUserId, join to user table and session table
-
 	getAllSchedule(knex, loginUserId) {
-		// return knex.from(table).select('*');
-		// .where({ user_id: loginUserId });
-
 		return knex.raw(
 			`select * from schedule
 				left join sessions on schedule.session_id = sessions.id

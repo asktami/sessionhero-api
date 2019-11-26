@@ -20,12 +20,13 @@ scheduleRouter
 
 		// here we will ALWAYS have the loginUserId because the client makes this request with the Auhorization Header containing the AuthToken used by jwt-auth to find the logged in user's user record
 
-		const { loginUserId } = req.user.id; // from jwt-auth
+		const loginUserId = req.user.id; // from jwt-auth
 		const knexInstance = req.app.get('db');
 
 		scheduleService
 			.getAllSchedule(knexInstance, loginUserId)
 			.then(schedule => {
+				console.log('schedule = ', schedule);
 				if (!schedule) {
 					console.log('schedule not found');
 					logger.error({
