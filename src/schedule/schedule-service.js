@@ -5,14 +5,26 @@ const scheduleService = {
 	// TBD
 	// get schedule records for logInUserId, join to user table and session table
 	getAllSchedule(knex, loginUserId) {
-		return knex.raw(
-			`select * from schedule
-				left join sessions on schedule.session_id = sessions.id
-				left join users on schedule.user_id = users.id
-				where schedule.user_id = :loginUserId
-				order by sessions.date, sessions.time_start`,
-			{ loginUserId: loginUserId }
-		);
+		// return knexInstance('schedule')
+		// 	.leftJoin('sessions', 'schedule.session_id', 'sessions.id')
+		// 	.leftJoin('users', 'schedule.user_id', 'users.id')
+		// 	.where('schedule.user_id', loginUserId);
+
+		return knex
+			.select('*')
+			.from(table)
+			.leftJoin('sessions', 'sessions.id', 'schedule.session_id')
+			.leftJoin('users', 'users.id', 'schedule.user_id');
+		// return knex
+		// 	.raw(
+		// 		`select * from schedule
+		// 		left join sessions on schedule.session_id = sessions.id
+		// 		left join users on schedule.user_id = users.id
+		// 		where schedule.user_id = :loginUserId
+		// 		order by sessions.date, sessions.time_start`,
+		// 		{ loginUserId: loginUserId }
+		// 	)
+		// 	.then(result => (result ? result.rows : result));
 	},
 
 	insertSchedule(knex, newScheduleItem) {

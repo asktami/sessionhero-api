@@ -26,7 +26,6 @@ scheduleRouter
 		scheduleService
 			.getAllSchedule(knexInstance, loginUserId)
 			.then(schedule => {
-				console.log('schedule = ', schedule);
 				if (!schedule) {
 					console.log('schedule not found');
 					logger.error({
@@ -42,6 +41,8 @@ scheduleRouter
 					});
 				}
 
+				console.log('schedule = ', typeof schedule);
+				console.log('schedule = ', schedule);
 				res.json(schedule.map(scheduleService.serializeSchedule));
 			})
 			.catch(next);
