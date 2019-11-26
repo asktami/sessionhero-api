@@ -24,7 +24,7 @@ scheduleRouter
 		const knexInstance = req.app.get('db');
 
 		scheduleService
-			.getAllSchedule(knexInstance, loginUserId)
+			.getSchedule(knexInstance, loginUserId)
 			.then(schedule => {
 				if (!schedule) {
 					console.log('schedule not found');
@@ -40,9 +40,17 @@ scheduleRouter
 						}
 					});
 				}
+				console.log('********************');
+				console.log('********************');
+				console.log('******************** schedule.length = ', schedule.length);
+				console.log('******************** schedule = ', schedule);
 
-				console.log('schedule = ', typeof schedule);
-				console.log('schedule = ', schedule);
+				var ts = new Date();
+				console.log(ts.toDateString());
+				console.log(ts.toTimeString());
+
+				console.log('********************');
+				console.log('********************');
 				res.json(schedule.map(scheduleService.serializeSchedule));
 			})
 			.catch(next);
