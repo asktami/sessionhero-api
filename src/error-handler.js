@@ -4,10 +4,8 @@ const logger = require('./logger');
 function errorHandler(error, req, res, next) {
 	let response;
 	if (NODE_ENV === 'production') {
-		response = { error: { message: 'server error' } };
+		response = { error: { message: 'server error AAAA' } };
 	} else {
-		console.error(error);
-
 		// include winston logging
 		// to log message:
 		logger.error('XXX ERROR-HANDLER-LOGGER XXX');
@@ -19,6 +17,8 @@ function errorHandler(error, req, res, next) {
 		);
 		response = { message: error.message, error };
 	}
+
+	console.error(error);
 	res.status(500).json(response);
 }
 
