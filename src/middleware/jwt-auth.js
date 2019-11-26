@@ -7,26 +7,31 @@ function requireAuth(req, res, next) {
 	const authToken = req.get('Authorization') || '';
 
 	let bearerToken;
-	if (!authToken.toLowerCase().startsWith('bearer ')) {
-		return res.status(401).json({ error: 'Missing bearer token' });
+
+	if (authToken.toLowerCase().startsWith('none')) {
+		// to handle when hit sessionListPage before login
+		next();
 	} else {
-		bearerToken = authToken.slice(7, authToken.length);
-	}
+		if (!authToken.toLowerCase().startsWith('bearer ')) {
+			return res.status(401).json({ error: 'Missing bearer token' });
+		} else {
+			bearerToken = authToken.slice(7, authToken.length);
+		}
 
-	try {
-		const payload = AuthService.verifyJwt(bearerToken);
+		try {
+			const payload = AuthService.verifyJwt(bearerToken);
 
-		AuthService.getUserWithUserName(req.app.get('db'), payload.sub)
-			.then(user => {
-				if (!user)
-					return res.status(401).json({ error: 'Unauthorized request' });
+			AuthService.getUserWithUserName(req.app.get('db'), payload.sub)
+				.then(user => {
+					if (!user)
+						return res.status(401).json({ error: 'Unauthorized request' });
 
-				// NOTE: successfully found logged in user is added to req object
-				// this means we can get the logged in user's id from req.user.id
+					// NOTE: successfully found logged in user is added to req object
+					// this means we can get the logged in user's id from req.user.id
 
-				req.user = user;
+					req.user = user;
 
-				/*
+					/*
 				// NOTE here (for demoUser) req.user =
 				{
 					"id":1,
@@ -35,14 +40,15 @@ function requireAuth(req, res, next) {
 				}
 				*/
 
-				next();
-			})
-			.catch(err => {
-				console.error(err);
-				next(err);
-			});
-	} catch (error) {
-		res.status(401).json({ error: error + '(Unauthorized request)' });
+					next();
+				})
+				.catch(err => {
+					console.error(err);
+					next(err);
+				});
+		} catch (error) {
+			res.status(401).json({ error: error + '(Unauthorized request)' });
+		}
 	}
 }
 
