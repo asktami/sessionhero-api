@@ -4,7 +4,7 @@ let table = 'schedule';
 const scheduleService = {
 	// TBD
 	// get schedule records for logInUserId, join to user table and session table
-	getAllSchedule(knex, loginUserId) {
+	getSchedule(knex, loginUserId) {
 		// return knexInstance('schedule')
 		// 	.leftJoin('sessions', 'schedule.session_id', 'sessions.id')
 		// 	.leftJoin('users', 'schedule.user_id', 'users.id')
@@ -14,7 +14,8 @@ const scheduleService = {
 			.select('*')
 			.from(table)
 			.leftJoin('sessions', 'sessions.id', 'schedule.session_id')
-			.leftJoin('users', 'users.id', 'schedule.user_id');
+			.leftJoin('users', 'users.id', 'schedule.user_id')
+			.where('schedule.user_id', loginUserId);
 		// return knex
 		// 	.raw(
 		// 		`select * from schedule
