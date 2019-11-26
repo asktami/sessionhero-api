@@ -4,9 +4,6 @@ const logger = require('../logger');
 
 const sessionService = require('./sessions-service');
 
-// for UNprotected endpoints
-const { optionalAuth } = require('../middleware/jwt-auth-optional');
-
 // for protected endpoints
 const { requireAuth } = require('../middleware/jwt-auth');
 
@@ -15,7 +12,7 @@ const sessionRouter = express.Router();
 // UNprotected endpoint (getAllSessions)
 sessionRouter
 	.route('/')
-	.all(optionalAuth)
+	.all(requireAuth)
 	.get((req, res, next) => {
 		const knexInstance = req.app.get('db');
 
@@ -47,14 +44,15 @@ sessionRouter
 
 // protected endpoint
 sessionRouter
-	.route('/:sessionId')
+	.route('/:id')
 	.all(requireAuth)
 	.all(checkSessionExists)
 	.all((req, res, next) => {
-		const { sessionId } = req.params;
+		const { id } = req.params;
 		const knexInstance = req.app.get('db');
+
 		sessionService
-			.getById(knexInstance, sessionId)
+			.getById(knexInstance, id)
 			.then(session => {
 				res.session = session;
 				next();
@@ -62,21 +60,23 @@ sessionRouter
 			.catch(next);
 	})
 	.get((req, res) => {
-		res.json(sessionService.serializeSession(res.session));
+		// res.json(res.session);
+		res.json(sessionService.serializeSession);
 	});
 
 // protected endpoint
 sessionRouter
-	.route('/:sessionId/comments/')
+	.route('/:id/comments/')
 	.all(requireAuth)
 	.all(checkSessionExists)
 	.get((req, res, next) => {
-		const { sessionId } = req.params;
+		const { id } = req.params;
 		const knexInstance = req.app.get('db');
 
 		sessionService
-			.getCommentsForSession(knexInstance, sessionId)
+			.getCommentsForSession(knexInstance, id)
 			.then(comments => {
+				// res.json(comments.map(comments));
 				res.json(comments.map(sessionService.serializeSessionComments));
 			})
 			.catch(next);
