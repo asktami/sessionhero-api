@@ -10,22 +10,11 @@ const { requireAuth } = require('../middleware/jwt-auth');
 const commentRouter = express.Router();
 const jsonBodyParser = express.json();
 
-// if was an UNPROTECTED endpoint
-// without checking that comment exists
-// commentRouter.route('/:commentId').get((req, res, next) => {
-// 	commentService
-// 		.getById(req.app.get('db'))
-// 		.then(comment => {
-// 			res.json(commentService.serializeComment(comment));
-// 		})
-// 		.catch(next);
-// });
-
 // all endpoints are protected
 // requireAuth is how we capture loggedId userId = req.user.id
-commentRouter.post(requireAuth, jsonBodyParser, (req, res, next) => {
-	const { text, rating, session_id } = req.body;
-	const newComment = { text, rating, session_id };
+commentRouter.route('/').post(jsonBodyParser, (req, res, next) => {
+	const { session_id, text, rating } = req.body;
+	const newComment = { session_id, text, rating };
 	const knexInstance = req.app.get('db');
 
 	for (const [key, value] of Object.entries(newComment))
@@ -53,9 +42,14 @@ commentRouter.post(requireAuth, jsonBodyParser, (req, res, next) => {
 		return res.status(400).send(error);
 	}
 
+	console.log('new comment req = ', req.user.id);
+	console.log('new comment = ', newComment);
+
 	// req.user is set in middleware/basic-auth
 	// this is the login user_id used to post comments
-	newComment.user_id = req.user.id;
+	newComment.user_id = req.user.id; // from jwt-auth
+
+	console.log('new comment before insert = ', newComment);
 
 	commentService
 		.insertComment(knexInstance, newComment)
@@ -66,21 +60,28 @@ commentRouter.post(requireAuth, jsonBodyParser, (req, res, next) => {
 				method: `${req.method}`,
 				ip: `${req.ip}`
 			});
+
 			res
 				.status(201)
 				.location(path.posix.join(req.originalUrl, `/${comment.id}`))
-				.json(commentService.serializeComment(res.comment));
+				.json(commentService.serializeComment(comment));
+			// GET ERROR: Cannot read property 'id' of undefined TypeError: Cannot read property 'id' of undefined
+
+			// .json(res.comment);
+			// GET ERROR: "Unexpected end of JSON input"
+
 			// return back all the fields in the comment that was created using serializeComment
 		})
 		.catch(next);
 });
 
 commentRouter
-	.route('/:commentId')
+	.route('/:id')
 	.all(requireAuth)
 	.all(checkCommentExists)
 	.get((req, res) => {
-		res.json(commentService.serializeComment(res.comment));
+		console.log('----------------- comments-service inside get');
+		res.json(commentService.serializeArticle(res.comment));
 	})
 	.delete((req, res, next) => {
 		const { id } = req.params;
@@ -146,6 +147,8 @@ commentRouter
 /* async/await syntax for promises */
 async function checkCommentExists(req, res, next) {
 	const { id } = req.params;
+
+	console.log('----------------- comments-service inside checkCommentExists');
 	try {
 		const comment = await commentService.getById(
 			req.app.get('db'),
@@ -168,6 +171,7 @@ async function checkCommentExists(req, res, next) {
 		res.comment = comment;
 		next();
 	} catch (error) {
+		console.log('comments-router error = ', error);
 		next(error);
 	}
 }

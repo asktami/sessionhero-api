@@ -2,11 +2,34 @@ const xss = require('xss');
 let table = 'comments';
 
 const commentService = {
-	getById(knex, id) {
-		return knex
+	// getById(knex, id) {
+	// 	return knex
+	// 		.from(table)
+	// 		.select('comments.*', 'users.username')
+	// 		.leftJoin('users', 'comments.user_id', 'users.id')
+	// 		.where('comments.id', id)
+	// 		.first();
+	// },
+
+	getById(db, id) {
+		return db
 			.from(table)
-			.select('*')
-			.leftJoin('users', 'comments.user_id', 'user.id')
+			.select(
+				'*',
+				db.raw(
+					`row_to_json(
+				  (SELECT tmp FROM (
+					SELECT
+					  usr.id,
+					  usr.username,
+					  usr.fullname,
+					  usr.date_created,
+					  usr.date_modified
+				  ) tmp)
+				) AS "user"`
+				)
+			)
+			.leftJoin('users AS usr', 'comments.user_id', 'usr.id')
 			.where('comments.id', id)
 			.first();
 	},
@@ -33,17 +56,14 @@ const commentService = {
 			.update(commentToUpdate);
 	},
 
-	// TBD HOW DOES THIS WORK???
-	// what is "user"??? where does it come from???
 	serializeComment(comment) {
 		return {
 			id: comment.id,
-			rating: comment.rating,
-			text: xss(comment.text),
-			session_id: comment.session_id,
 			user_id: comment.user_id,
-			date_created: comment.date_created,
-			date_modified: comment.date_modified,
+			text: xss(comment.text),
+			rating: xss(comment.rating),
+			session_id: comment.session_id,
+			date_created: new Date(comment.date_created),
 			user: comment.user || {}
 		};
 	}

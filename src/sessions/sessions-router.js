@@ -33,11 +33,12 @@ sessionRouter
 
 		sessionService
 			.getAllSessions(knexInstance, loginUserId)
-			.then(session => {
-				// NOTE: this is the same as:
-				// res.json(
-				// 	sessions.map(session => sessionService.serializeSession(session))
-				res.json(session);
+			.then(sessions => {
+				// res.json(sessions.map(sessionService.serializeSession));
+				res.json(sessions);
+
+				// TBD
+				// GET ERROR: "SyntaxError: Unexpected end of JSON input
 			})
 			.catch(next);
 	});
@@ -47,21 +48,8 @@ sessionRouter
 	.route('/:id')
 	.all(requireAuth)
 	.all(checkSessionExists)
-	.all((req, res, next) => {
-		const { id } = req.params;
-		const knexInstance = req.app.get('db');
-
-		sessionService
-			.getById(knexInstance, id)
-			.then(session => {
-				res.session = session;
-				next();
-			})
-			.catch(next);
-	})
 	.get((req, res) => {
-		res.json(res.session);
-		// res.json(sessionService.serializeSession);
+		res.json(sessionService.serializeSession(res.session));
 	});
 
 // protected endpoint
@@ -76,9 +64,9 @@ sessionRouter
 		sessionService
 			.getCommentsForSession(knexInstance, id)
 			.then(comments => {
-				console.log('---------- sessions-router comments = ', comments);
+				console.log('---------- sessions-router comments = ');
 				// res.json(comments.map(comments));
-				// res.json(comments.map(sessionService.serializeSessionComments));
+				// res.json(comments.map(sessionService.serializeSessionComment));
 
 				res.json(comments);
 			})

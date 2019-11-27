@@ -4,120 +4,186 @@ const Treeize = require('treeize');
 let table = 'sessions';
 
 const sessionService = {
+	// XgetAllSessions(db) {
+	// 	return db
+	// 		.select('*')
+	// 		.from(table)
+	// 		.orderBy('date', 'asc')
+	// 		.orderBy('time_start', 'asc')
+	// 		.orderBy('track', 'asc');
+	// },
+
+	// XgetById(db, id) {
+	// 	return db
+	// 		.select('*')
+	// 		.from(table)
+	// 		.where('id', id)
+	// 		.first();
+	// },
+
+	// XgetCommentsForSession(db, id) {
+	// 	return db
+	// 		.from('comments AS com')
+	// 		.select(
+	// 			'com.id',
+	// 			'com.rating',
+	// 			'com.text',
+	// 			'com.date_created',
+	// 			'usr.id as users.id',
+	// 			'usr.username'
+	// 		)
+	// 		.where('com.session_id', id)
+	// 		.leftJoin('users AS usr', 'com.user_id', 'usr.id')
+	// 		.groupBy('com.id', 'usr.id');
+	// },
+
+	// XserializeSessionComment(comment) {
+	// 	const { user } = comment;
+	// 	return {
+	// 		id: comment.id,
+	// 		user_id: comment.user_id,
+	// 		text: xss(comment.text),
+	// 		rating: xss(comment.rating),
+	// 		session_id: comment.session_id,
+	// 		date_created: new Date(comment.date_created),
+	// 		user: {
+	// 			id: user.id,
+	// 			username: user.username,
+	// 			fullname: user.fullname,
+	// 			date_created: new Date(user.date_created),
+	// 			date_modified: new Date(user.date_modified) || null
+	// 		}
+	// 	};
+	// }
+
+	// ****************************************
+
 	getAllSessions(db) {
 		return db
-			.select('*')
 			.from(table)
+			.select(
+				'sessions.*',
+				db.raw(`count(DISTINCT comm) AS number_of_comments`),
+				db.raw(
+					`json_strip_nulls(
+				json_build_object(
+				  'id', usr.id,
+				  'username', usr.username,
+				  'fullname', usr.fullname,
+				  'date_created', usr.date_created,
+				  'date_modified', usr.date_modified
+				)
+			  ) AS "user"`
+				)
+			)
+			.leftJoin('comments AS comm', 'sessions.id', 'comm.session_id')
+			.leftJoin('users AS usr', 'comm.user_id', 'usr.id')
 			.orderBy('date', 'asc')
 			.orderBy('time_start', 'asc')
-			.orderBy('track', 'asc');
+			.orderBy('track', 'asc')
+			.groupBy('sessions.id', 'usr.id');
 	},
 
 	getById(db, id) {
-		console.log('got here - sessions-service getById = ', id);
-
-		// return sessionService
-		// 	.getAllSessions(db)
-		// 	.where('sessions.id', id)
-		// 	.first();
-
-		return db
-			.select('*')
-			.from(table)
-			.where('id', id)
+		return sessionService
+			.getAllSessions(db)
+			.where('sessions.id', id)
 			.first();
 	},
 
 	getCommentsForSession(db, id) {
 		return db
-			.from('comments AS com')
+			.from('comments AS comm')
 			.select(
-				'com.id',
-				'com.rating',
-				'com.text',
-				'com.date_created',
-				'usr.id as users.id',
-				'usr.username'
+				'comm.id',
+				'comm.text',
+				'comm.rating',
+				'comm.user_id',
+				'comm.session_id',
+				'comm.date_created',
+				db.raw(
+					`json_strip_nulls(
+				row_to_json(
+				  (SELECT tmp FROM (
+					SELECT
+					  usr.id,
+					  usr.username,
+					  usr.fullname,
+					  usr.date_created,
+					  usr.date_modified
+				  ) tmp)
+				)
+			  ) AS "user"`
+				)
 			)
-			.where('com.session_id', id)
-			.leftJoin('users AS usr', 'com.user_id', 'usr.id')
-			.groupBy('com.id', 'usr.id');
-	},
-
-	serializeSessions(sessions) {
-		return sessions.map(this.serializeSession);
+			.where('comm.session_id', id)
+			.leftJoin('users AS usr', 'comm.user_id', 'usr.id')
+			.groupBy('comm.id', 'usr.id');
 	},
 
 	serializeSession(session) {
-		return session;
-		//const sessionTree = new Treeize();
-
-		// Some light hackiness to allow for the fact that `treeize`
-		// only accepts arrays of objects, and we want to use a single
-		// object.
-		// const sessionData = sessionTree.grow([session]).getData()[0];
-
-		// return {
-		// 	id: sessionData.id,
-		// 	track: sessionData.track,
-		// 	day: sessionData.day,
-		// 	date: sessionData.date,
-		// 	time_start: sessionData.time_start,
-		// 	time_end: sessionData.time_end,
-		// 	location: sessionData.location,
-		// 	name: sessionData.name,
-		// 	description: sessionData.description,
-		// 	background: sessionData.background,
-		// 	objective_1: sessionData.objective_1,
-		// 	objective_2: sessionData.objective_2,
-		// 	objective_3: sessionData.objective_3,
-		// 	objective_4: sessionData.objective_4,
-		// 	speaker: sessionData.speaker,
-		// 	// user: sessionData.user || {},
-		// 	number_of_comments: Number(sessionData.number_of_comments) || 0,
-		// 	average_comment_rating:
-		// 		Math.round(sessionData.average_comment_rating) || 0
-		// };
+		const { user } = session;
+		return {
+			id: session.id,
+			track: session.track,
+			day: session.day,
+			date: session.date,
+			time_start: session.time_start,
+			time_end: session.time_end,
+			location: session.location,
+			name: session.name,
+			description: session.description,
+			background: session.background,
+			objective_1: session.objective_1,
+			objective_2: session.objective_2,
+			objective_3: session.objective_3,
+			objective_4: session.objective_4,
+			speaker: session.speaker,
+			number_of_comments: Number(session.number_of_comments) || 0,
+			user: {
+				id: user.id,
+				username: user.username,
+				fullname: user.fullname,
+				date_created: new Date(user.date_created),
+				date_modified: new Date(user.date_modified) || null
+			}
+		};
 	},
 
-	serializeSessionComments(comments) {
-		return comments.map(this.serializeSessionComment);
+	XXXserializeSessionComment(comment) {
+		const { user } = comment;
+		return {
+			id: comment.id,
+			user_id: comment.user_id,
+			session_id: comment.session_id,
+			text: xss(comment.text),
+			rating: xss(comment.rating),
+			date_created: new Date(comment.date_created),
+			user: {
+				id: user.id,
+				username: user.username,
+				fullname: user.fullname
+			}
+		};
 	},
-
-	// serializeSessionComment(comment) {
-	// 	const commentTree = new Treeize();
-
-	// 	// Some light hackiness to allow for the fact that `treeize`
-	// 	// only accepts arrays of objects, and we want to use a single
-	// 	// object.
-	// 	const commentData = commentTree.grow([comment]).getData()[0];
-
-	// 	return {
-	// 		id: commentData.id,
-	// 		text: xss(commentData.text),
-	// 		rating: xss(commentData.rating),
-	// 		session_id: commentData.session_id,
-	// 		user: commentData.user || {},
-	// 		date_created: commentData.date_created
-	// 	};
-	// }
 
 	serializeSessionComment(comment) {
-		return comment;
-		// const { user } = comment;
-		// return {
-		// 	id: comment.id,
-		// 	text: xss(comment.text),
-		// 	session_id: comment.session_id,
-		// 	date_created: new Date(comment.date_created),
-		// 	user: {
-		// 		id: user.id,
-		// 		user_name: user.username,
-		// 		full_name: user.fullname,
-		// 		date_created: new Date(user.date_created),
-		// 		date_modified: new Date(user.date_modified) || null
-		// 	}
-		// };
+		const { user } = comment;
+		return {
+			id: comment.id,
+			user_id: comment.user_id,
+			text: xss(comment.text),
+			rating: xss(comment.rating),
+			session_id: comment.session_id,
+			date_created: new Date(comment.date_created),
+			user: {
+				id: user.id,
+				username: user.username,
+				fullname: user.fullname,
+				date_created: new Date(user.date_created),
+				date_modified: new Date(user.date_modified) || null
+			}
+		};
 	}
 };
 

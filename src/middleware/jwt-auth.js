@@ -10,6 +10,7 @@ function requireAuth(req, res, next) {
 
 	if (authToken.toLowerCase().startsWith('none')) {
 		// to handle when hit sessionListPage before login
+		console.log('jwt none');
 		next();
 	} else {
 		if (!authToken.toLowerCase().startsWith('bearer ')) {
