@@ -13,9 +13,13 @@ const commentService = {
 
 	getById(db, id) {
 		return db
-			.from(table)
+			.from(`comments as comm`)
 			.select(
-				'*',
+				'comm.id',
+				'comm.text',
+				'comm.rating',
+				'comm.date_created',
+				'comm.session_id',
 				db.raw(
 					`row_to_json(
 				  (SELECT tmp FROM (
@@ -29,8 +33,8 @@ const commentService = {
 				) AS "user"`
 				)
 			)
-			.leftJoin('users AS usr', 'comments.user_id', 'usr.id')
-			.where('comments.id', id)
+			.leftJoin('users AS usr', 'comm.user_id', 'usr.id')
+			.where('comm.id', id)
 			.first();
 	},
 
@@ -64,7 +68,13 @@ const commentService = {
 			rating: xss(comment.rating),
 			session_id: comment.session_id,
 			date_created: new Date(comment.date_created),
-			user: comment.user || {}
+			user: {
+				id: user.id,
+				username: user.username,
+				fullname: user.fullname,
+				date_created: new Date(user.date_created),
+				date_modified: new Date(user.date_modified) || null
+			}
 		};
 	}
 };
