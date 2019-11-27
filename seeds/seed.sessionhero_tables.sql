@@ -147,20 +147,20 @@ VALUES
 ,('Vendor Session','thu','8/8/2019','14:15:00','14:45:00','Sun Ballroom','VEN04','Who Wants to Be a FileMaker Developer?','The FileMaker Developer Conference consistently offers great networking and awesome learning opportunities year after year. Take a break from the seriousness, and join the Cross team and host Regis Fill-in for some trivia fun! Test your knowledge on topics ranging from the FileMaker Platform to Disney to Geek Culture. Visit the Cross booth to sign up for a chance to take your turn in the hot seat. If you prefer, simply join the “studio” audience to cheer on the contestants as each question gets progressively harder, and to offer your insight when a life line is needed. Everyone in attendance is eligible to win one of our special prizes.  This is your chance to have some fun, test your FileMaker knowledge, and meet the Cross team!',NULL,NULL,NULL,NULL,NULL,'D. Todd Weller (Cross IT Services & Solutions, LLC)');
 
 
-INSERT INTO schedule (id, session_id, user_id)
+INSERT INTO schedule (session_id, user_id)
 VALUES
- (1,'BUS04',1)
-,(2,'CRE12',1)
-,(3,'TRA08',1)
-,(4,'TRA02',1)
-,(5,'TRA02',2);
+ ('BUS04',1)
+,('CRE12',1)
+,('TRA08',1)
+,('TRA02',1)
+,('TRA02',2);
 
 
-INSERT INTO comments (id, text, rating, date_created, session_id, user_id)
+INSERT INTO comments (text, rating, date_created, session_id, user_id)
 VALUES
- (1,'This thing is amazing.',4,'2019-10-31 23:14:12.649275','BUS04',1)
-,(2,'Put a bird on it!',4,'2019-10-31 23:14:12.649275','BUS04',1)
-,(3,'All the other reviewers are obviously insane, but this thing is actually pretty amazing.',5,'2019-10-31 23:14:12.649275','CRE12',2)
-,(4,'When life gives you lemons, trade them for this thing.',4,'2019-10-31 23:14:12.649275','CRE12',2);
+ ('This thing is amazing.',4,'2019-10-31 23:14:12.649275','BUS04',1)
+,('Put a bird on it!',4,'2019-10-31 23:14:12.649275','BUS04',1)
+,('All the other reviewers are obviously insane, but this thing is actually pretty amazing.',5,'2019-10-31 23:14:12.649275','CRE12',2)
+,('When life gives you lemons, trade them for this thing.',4,'2019-10-31 23:14:12.649275','CRE12',2);
 
 COMMIT;
