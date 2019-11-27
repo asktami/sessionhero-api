@@ -8,14 +8,14 @@ function makeUsersArray() {
 			username: 'test-user-1',
 			password: 'password',
 			fullname: 'Test user 1',
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		},
 		{
 			id: 2,
 			username: 'test-user-2',
 			password: 'password',
 			fullname: 'Test user 2',
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		}
 	];
 }
@@ -194,10 +194,10 @@ function makeCommentsArray(users, sessions) {
 		{
 			id: 1,
 			rating: 2,
-			text: 'First test review!',
+			text: 'First test comment!',
 			session_id: sessions[0].id,
 			user_id: users[0].id,
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		},
 		{
 			id: 2,
@@ -205,7 +205,7 @@ function makeCommentsArray(users, sessions) {
 			text: 'Second test review!',
 			session_id: sessions[0].id,
 			user_id: users[1].id,
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		},
 		{
 			id: 3,
@@ -213,7 +213,7 @@ function makeCommentsArray(users, sessions) {
 			text: 'Third test review!',
 			session_id: sessions[1].id,
 			user_id: users[0].id,
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		},
 		{
 			id: 4,
@@ -221,7 +221,7 @@ function makeCommentsArray(users, sessions) {
 			text: 'Fourth test review!',
 			session_id: sessions[1].id,
 			user_id: users[1].id,
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		}
 	];
 }
@@ -232,51 +232,54 @@ function makeScheduleArray(users, sessions) {
 			id: 1,
 			session_id: sessions[0].id,
 			user_id: users[0].id,
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		},
 		{
 			id: 2,
 			session_id: sessions[1].id,
 			user_id: users[0].id,
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		},
 		{
 			id: 3,
 			session_id: sessions[2].id,
 			user_id: users[0].id,
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		},
 		{
 			id: 4,
 			session_id: sessions[0].id,
 			user_id: users[1].id,
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		},
 		{
 			id: 5,
 			session_id: sessions[1].id,
 			user_id: users[1].id,
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		},
 		{
 			id: 6,
 			session_id: sessions[2].id,
 			user_id: users[1].id,
-			date_created: '2029-01-22T16:28:32.615Z'
+			date_created: new Date('2029-01-22T16:28:32.615Z')
 		}
 	];
 }
 
-// make table join of sessions + comments
-function makeExpectedSession(users, sessions, schedule, comments = []) {
-	const user = users.find(user => user.id === schedule.user_id);
+// sessions + comments + users join table
+function makeExpectedSession(sessions, comments = [], users = []) {
+	const user = users.find(user => user.id === comments.user_id);
 
 	const sessionComments = comments.filter(
 		comment => comment.session_id === sessions.id
 	);
 
-	const number_of_reviews = sessionComments.length;
-	const average_review_rating = calculateAverageReviewRating(sessionComments);
+	const number_of_comments = comments.filter(
+		comment => comment.session_id === sessions.id
+	).length;
+
+	const average_comment_rating = calculateAverageReviewRating(sessionComments);
 
 	return {
 		id: sessions.id,
@@ -295,14 +298,24 @@ function makeExpectedSession(users, sessions, schedule, comments = []) {
 		objective_3: sessions.objective_3,
 		objective_4: sessions.objective_4,
 		speaker: sessions.speaker,
-		number_of_reviews,
-		average_review_rating,
+		number_of_comments,
+		average_comment_rating,
 		user: {
 			id: user.id,
 			username: user.username,
 			fullname: user.fullname,
-			date_created: user.date_created
+			date_created: user.date_created.toISOString()
 		}
+	};
+}
+
+// schedule table
+// pass in testSessions[0], testUsers[0]
+function makeExpectedSchedule(session, user) {
+	return {
+		id: schedule.id,
+		user_id: user_id,
+		session_id: session_id
 	};
 }
 
@@ -314,10 +327,10 @@ function calculateAverageReviewRating(comments) {
 	return Math.round(sum / comments.length);
 }
 
-// make table join of comments + users
-function makeExpectedSessionComments(users, sessions, comments) {
+// session + comments + users join table
+function makeExpectedSessionComments(users, sessionId, comments) {
 	const expectedComments = comments.filter(
-		comment => comment.session_id === sessions.id
+		comment => comment.session_id === sessionId
 	);
 
 	return expectedComments.map(comment => {
@@ -327,81 +340,19 @@ function makeExpectedSessionComments(users, sessions, comments) {
 			id: comment.id,
 			text: comment.text,
 			rating: comment.rating,
-			date_created: comment.date_created,
+			date_created: comment.date_created.toISOString(),
 			user: {
 				id: commentUser.id,
 				username: commentUser.username,
 				fullname: commentUser.fullname,
-				date_created: commentUser.date_created
+				date_created: commentUser.date_created.toISOString(),
+				date_modified: commentUser.date_modified || null
 			}
 		};
 	});
 }
 
-// make table join of sessions + schedule + user
-function makeExpectedSchedule(users, sessions, schedule, comments = []) {
-	const user = users.find(user => user.id === schedule.user_id);
-
-	const sessionSchedule = schedule.find(
-		schedule => schedule.session_id === sessions.id
-	);
-
-	return {
-		id: sessions.id,
-		date_created: sessions.date_created,
-		track: sessions.track,
-		day: sessions.day,
-		date: sessions.date,
-		time_start: sessions.time_start,
-		time_end: sessions.time_end,
-		location: sessions.location,
-		name: sessions.name,
-		description: sessions.description,
-		background: sessions.background,
-		objective_1: sessions.objective_1,
-		objective_2: sessions.objective_2,
-		objective_3: sessions.objective_3,
-		objective_4: sessions.objective_4,
-		speaker: sessions.speaker,
-		number_of_reviews,
-		average_review_rating,
-		user: {
-			id: user.id,
-			username: user.username,
-			fullname: user.fullname,
-			date_created: user.date_created
-		},
-		schedule: {
-			id: sessionSchedule.id,
-			user_id: sessionSchedule.user_id,
-			session_id: sessionSchedule.session_id,
-			date_created: sessionSchedule.date_created
-		}
-	};
-}
-
-// pass in testUsers, testSessions[0], testComments
-function makeExpectedComment(users, session, comments = []) {
-	const comment = comments.filter(comment => comment.session_id === session.id);
-
-	const user = users.find(user => user.id === comment.user_id);
-
-	return {
-		id: comment.id,
-		text: comment.text,
-		rating: comment.rating,
-		date_created: comment.date_created,
-		idSession: session.id,
-		user: {
-			id: user.id,
-			username: user.username,
-			fullname: user.fullname,
-			date_created: user.date_created
-		}
-	};
-}
-
-//  users can only add/update new Comments
+//  users can only add/update/delete Comments
 // pass in testUsers[0], testSessions[0]
 function makeMaliciousComment(user, session) {
 	const maliciousComment = {
