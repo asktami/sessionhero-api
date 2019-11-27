@@ -4,12 +4,7 @@ const helpers = require('./test-helpers');
 
 describe('Comments Endpoints', function() {
 	let db;
-	const {
-		testComments,
-		testUsers,
-		testSessions,
-		testSchedules
-	} = helpers.makeFixtures();
+	const { testComments, testUsers, testSessions } = helpers.makeFixtures();
 
 	before('make knex instance', () => {
 		db = knex({
@@ -76,13 +71,7 @@ describe('Comments Endpoints', function() {
 
 		context('Given there are comments in the database', () => {
 			beforeEach('insert comments', () =>
-				helpers.seedTables(
-					db,
-					testUsers,
-					testSessions,
-					testComments,
-					testSchedules
-				)
+				helpers.seedTables(db, testUsers, testSessions, testComments)
 			);
 
 			it('responds with 200 and the specified comment', () => {
@@ -104,23 +93,17 @@ describe('Comments Endpoints', function() {
 	// TBD POST SESSION COMMENTS ************************************
 	describe(`POST /api/sessions/:sessionId/comments/`, () => {
 		beforeEach('insert comments', () =>
-			helpers.seedTables(
-				db,
-				testUsers,
-				testSessions,
-				testComments,
-				testSchedules
-			)
+			helpers.seedTables(db, testUsers, testSessions, testComments)
 		);
 
 		it(`creates a comment, responding with 201 and the new comment`, () => {
 			let userId = testUsers[0].id;
-			let sessionId = testSessions[0].id;
+			let session_id = testSessions[0].id;
 
 			const newComment = {
 				text: 'Test New Comment',
 				rating: 1,
-				sessionId: sessionId,
+				session_id: session_id,
 				user_id: user_id
 			};
 			return supertest(app)
@@ -132,10 +115,10 @@ describe('Comments Endpoints', function() {
 					expect(res.body).to.have.property('id');
 					expect(res.body.text).to.eql(newComment.text);
 					expect(res.body.rating).to.eql(newComment.rating);
-					expect(res.body.sessionId).to.eql(newComment.sessionId);
+					expect(res.body.session_id).to.eql(newComment.session_id);
 					expect(res.body.user_id).to.eql(newComment.user_id);
 					expect(res.headers.location).to.eql(
-						`/api/sessions/${sessionId}/comments/${res.body.id}`
+						`/api/sessions/${session_id}/comments/${res.body.id}`
 					);
 				});
 		});
@@ -145,12 +128,12 @@ describe('Comments Endpoints', function() {
 
 		requiredFields.forEach(field => {
 			let user_id = testUsers[0].id;
-			let sessionId = testSessions[0].id;
+			let session_id = testSessions[0].id;
 
 			const newComment = {
 				text: 'Test new comment',
 				rating: 3,
-				sessionId: sessionId,
+				session_id: session_id,
 				user_id: user_id
 			};
 
@@ -207,13 +190,7 @@ describe('Comments Endpoints', function() {
 
 		context('Given there are comments in the database', () => {
 			beforeEach('insert comments', () =>
-				helpers.seedTables(
-					db,
-					testUsers,
-					testSessions,
-					testComments,
-					testSchedules
-				)
+				helpers.seedTables(db, testUsers, testSessions, testComments)
 			);
 
 			// TBD shouldn't this be comment.id === idToRemove???
@@ -261,13 +238,7 @@ describe('Comments Endpoints', function() {
 
 		context('Given there are comments in the database', () => {
 			beforeEach('insert comments', () =>
-				helpers.seedTables(
-					db,
-					testUsers,
-					testSessions,
-					testComments,
-					testSchedules
-				)
+				helpers.seedTables(db, testUsers, testSessions, testComments)
 			);
 
 			it('responds with 204 and updates the comment', () => {
