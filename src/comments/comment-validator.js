@@ -14,11 +14,11 @@ function getCommentValidationError({ text, rating }) {
 		};
 	}
 
-	if (rating && (!Number.isInteger(rating) || rating < 0 || rating > 5)) {
+	if (rating && (!Number.isInteger(rating) || rating < 1 || rating > 5)) {
 		logger.error(`Invalid rating '${rating}' supplied`);
 		return {
 			error: {
-				message: `The rating must be a number between 0 and 5`
+				message: `The rating must be a number between 1 and 5`
 			}
 		};
 	}
