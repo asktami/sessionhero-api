@@ -12,9 +12,14 @@ const jsonBodyParser = express.json();
 
 // all endpoints are protected
 // requireAuth is how we capture loggedId userId = req.user.id
-commentRouter.route('/').post(jsonBodyParser, (req, res, next) => {
+
+// get the user_id from the authorization header
+
+// POST
+commentRouter.route('/').post(requireAuth, jsonBodyParser, (req, res, next) => {
 	const { session_id, text, rating } = req.body;
 	const newComment = { session_id, text, rating };
+
 	const knexInstance = req.app.get('db');
 
 	for (const [key, value] of Object.entries(newComment))
@@ -42,6 +47,9 @@ commentRouter.route('/').post(jsonBodyParser, (req, res, next) => {
 		return res.status(400).send(error);
 	}
 
+	// QUESTION
+	// why are we going here when url = /comments/commentId
+	console.log('comments-router GOT HERE ---------------');
 	console.log('new comment req = ', req.user.id);
 	console.log('new comment = ', newComment);
 
@@ -80,7 +88,9 @@ commentRouter
 	.all(requireAuth)
 	.all(checkCommentExists)
 	.get((req, res) => {
-		console.log('----------------- comments-service inside get');
+		console.log(
+			'----------------- comments-router inside get with commentId in url'
+		);
 		res.json(commentService.serializeArticle(res.comment));
 	})
 	.delete((req, res, next) => {
@@ -148,7 +158,7 @@ commentRouter
 async function checkCommentExists(req, res, next) {
 	const { id } = req.params;
 
-	console.log('----------------- comments-service inside checkCommentExists');
+	console.log('----------------- comments-router inside checkCommentExists');
 	try {
 		const comment = await commentService.getById(
 			req.app.get('db'),
