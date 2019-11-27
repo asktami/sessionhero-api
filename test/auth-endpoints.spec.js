@@ -6,7 +6,7 @@ const helpers = require('./test-helpers');
 describe('Auth Endpoints', function() {
 	let db;
 
-	const { testUsers } = helpers.makeThingsFixtures();
+	const { testUsers } = helpers.makeFixtures();
 	const testUser = testUsers[0];
 
 	before('make knex instance', () => {
@@ -20,7 +20,6 @@ describe('Auth Endpoints', function() {
 	after('disconnect from db', () => db.destroy());
 
 	before('cleanup', () => helpers.cleanTables(db));
-
 	afterEach('cleanup', () => helpers.cleanTables(db));
 
 	describe(`POST /api/auth/login`, () => {
@@ -70,9 +69,7 @@ describe('Auth Endpoints', function() {
 				username: testUser.username,
 				password: testUser.password
 			};
-			// TBD what is  user_id here ???
-			// is it what's returned from db assigned to whatever I decide???
-			// how do I return logged in user_id to my client???
+
 			const expectedToken = jwt.sign(
 				{ user_id: testUser.id },
 				process.env.JWT_SECRET,
@@ -95,10 +92,6 @@ describe('Auth Endpoints', function() {
 		beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
 
 		it(`responds 200 and JWT auth token using secret`, () => {
-			// TBD what is user_id here ???
-			// is it what's returned from db assigned to whatever I decide???
-			// how do I return logged in user_id to my client???
-
 			const expectedToken = jwt.sign(
 				{ user_id: testUser.id },
 				process.env.JWT_SECRET,
