@@ -9,7 +9,7 @@ describe('Protected endpoints', function() {
 		testUsers,
 		testSessions,
 		testComments,
-		testSchedule
+		testSchedules
 	} = helpers.makeFixtures();
 
 	before('make knex instance', () => {
@@ -21,13 +21,11 @@ describe('Protected endpoints', function() {
 	});
 
 	after('disconnect from db', () => db.destroy());
-
 	before('cleanup', () => helpers.cleanTables(db));
-
 	afterEach('cleanup', () => helpers.cleanTables(db));
 
-	beforeEach('insert table data', () =>
-		helpers.seedTables(db, testUsers, testSessions, testComments, testSchedule)
+	beforeEach('insert data into all tables', () =>
+		helpers.seedTables(db, testUsers, testSessions, testComments, testSchedules)
 	);
 
 	const protectedEndpoints = [
