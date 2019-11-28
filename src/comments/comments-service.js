@@ -71,6 +71,7 @@ const commentService = {
 	},
 
 	serializeComment(comment) {
+		const { user } = comment;
 		return {
 			id: comment.id,
 			user_id: comment.user_id,
