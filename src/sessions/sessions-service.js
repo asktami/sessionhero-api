@@ -1,87 +1,71 @@
-// methods to store database transactions
 const xss = require('xss');
-const Treeize = require('treeize');
 let table = 'sessions';
 
 const sessionService = {
-	// XgetAllSessions(db) {
-	// 	return db
-	// 		.select('*')
-	// 		.from(table)
-	// 		.orderBy('date', 'asc')
-	// 		.orderBy('time_start', 'asc')
-	// 		.orderBy('track', 'asc');
-	// },
-
-	// XgetById(db, id) {
-	// 	return db
-	// 		.select('*')
-	// 		.from(table)
-	// 		.where('id', id)
-	// 		.first();
-	// },
-
-	// XgetCommentsForSession(db, id) {
-	// 	return db
-	// 		.from('comments AS com')
-	// 		.select(
-	// 			'com.id',
-	// 			'com.rating',
-	// 			'com.text',
-	// 			'com.date_created',
-	// 			'usr.id as users.id',
-	// 			'usr.username'
-	// 		)
-	// 		.where('com.session_id', id)
-	// 		.leftJoin('users AS usr', 'com.user_id', 'usr.id')
-	// 		.groupBy('com.id', 'usr.id');
-	// },
-
-	// XserializeSessionComment(comment) {
-	// 	const { user } = comment;
-	// 	return {
-	// 		id: comment.id,
-	// 		user_id: comment.user_id,
-	// 		text: xss(comment.text),
-	// 		rating: xss(comment.rating),
-	// 		session_id: comment.session_id,
-	// 		date_created: new Date(comment.date_created),
-	// 		user: {
-	// 			id: user.id,
-	// 			username: user.username,
-	// 			fullname: user.fullname,
-	// 			date_created: new Date(user.date_created),
-	// 			date_modified: new Date(user.date_modified) || null
-	// 		}
-	// 	};
-	// }
-
-	// ****************************************
-
-	getAllSessions(db) {
-		return db
-			.from(table)
-			.select(
-				'sessions.*',
-				db.raw(`count(DISTINCT comm) AS number_of_comments`),
-				db.raw(
-					`json_strip_nulls(
-				json_build_object(
-				  'id', usr.id,
-				  'username', usr.username,
-				  'fullname', usr.fullname,
-				  'date_created', usr.date_created,
-				  'date_modified', usr.date_modified
-				)
-			  ) AS "user"`
-				)
+	getAllSessions(db, loginUserId = '') {
+		if (loginUserId) {
+			return db(
+				db('sessions')
+					.select(
+						'sessions.id as id',
+						'sessions.id as session_id', // so that has field with same name as in schedule
+						'track',
+						'day',
+						'date',
+						'time_start',
+						'time_end',
+						'location',
+						'name',
+						'description',
+						'background',
+						'objective_1',
+						'objective_2',
+						'objective_3',
+						'objective_4',
+						'speaker'
+					)
+					.as('sessions')
 			)
-			.leftJoin('comments AS comm', 'sessions.id', 'comm.session_id')
-			.leftJoin('users AS usr', 'comm.user_id', 'usr.id')
-			.orderBy('date', 'asc')
-			.orderBy('time_start', 'asc')
-			.orderBy('track', 'asc')
-			.groupBy('sessions.id', 'usr.id');
+				.leftJoin(
+					db('schedule')
+						.select(
+							'schedule.id as schedule_id',
+							'schedule.user_id as user_id',
+							'schedule.session_id as schedule_session_id'
+						)
+						.where('schedule.user_id', loginUserId)
+						.as('schedule'),
+					'sessions.id',
+					'schedule.schedule_session_id'
+				)
+				.orderBy('date', 'asc')
+				.orderBy('time_start', 'asc')
+				.orderBy('track', 'asc');
+		} else {
+			return db
+				.from(table)
+				.select(
+					'sessions.id as id',
+					'sessions.id as session_id', // so that has field with same name as in schedule
+					'track',
+					'day',
+					'date',
+					'time_start',
+					'time_end',
+					'location',
+					'name',
+					'description',
+					'background',
+					'objective_1',
+					'objective_2',
+					'objective_3',
+					'objective_4',
+					'speaker'
+				)
+				.orderBy('date', 'asc')
+				.orderBy('time_start', 'asc')
+				.orderBy('track', 'asc');
+		}
 	},
 
 	getById(db, id) {
@@ -122,9 +106,9 @@ const sessionService = {
 	},
 
 	serializeSession(session) {
-		const { user } = session;
 		return {
 			id: session.id,
+			session_id: session.session_id, // so that has field with same name as in schedule
 			track: session.track,
 			day: session.day,
 			date: session.date,
@@ -139,31 +123,8 @@ const sessionService = {
 			objective_3: session.objective_3,
 			objective_4: session.objective_4,
 			speaker: session.speaker,
-			number_of_comments: Number(session.number_of_comments) || 0,
-			user: {
-				id: user.id,
-				username: user.username,
-				fullname: user.fullname,
-				date_created: new Date(user.date_created),
-				date_modified: new Date(user.date_modified) || null
-			}
-		};
-	},
-
-	XXXserializeSessionComment(comment) {
-		const { user } = comment;
-		return {
-			id: comment.id,
-			user_id: comment.user_id,
-			session_id: comment.session_id,
-			text: xss(comment.text),
-			rating: xss(comment.rating),
-			date_created: new Date(comment.date_created),
-			user: {
-				id: user.id,
-				username: user.username,
-				fullname: user.fullname
-			}
+			user_id: session.user_id,
+			schedule_id: session.schedule_id
 		};
 	},
 

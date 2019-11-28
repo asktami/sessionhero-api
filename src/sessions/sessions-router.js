@@ -25,20 +25,10 @@ sessionRouter
 			loginUserId = req.user.id;
 		}
 
-		console.log('********************');
-		console.log('********************');
-
-		console.log('req.user = ', req.user);
-		console.log('sessions-router LOGIN USER ID = ', loginUserId);
-
 		sessionService
 			.getAllSessions(knexInstance, loginUserId)
 			.then(sessions => {
-				// res.json(sessions.map(sessionService.serializeSession));
-				res.json(sessions);
-
-				// TBD
-				// GET ERROR: "SyntaxError: Unexpected end of JSON input
+				res.json(sessions.map(sessionService.serializeSession));
 			})
 			.catch(next);
 	});

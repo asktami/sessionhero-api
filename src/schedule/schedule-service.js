@@ -31,48 +31,6 @@ const scheduleService = {
 			.where('schedule.user_id', loginUserId);
 	},
 
-	// getScheduleXXX(knex, loginUserId) {
-	// 	return knex
-	// 		.from('schedule')
-	// 		.select(
-	// 			'schedule.id',
-	// 			'schedule.session_id',
-	// 			'schedule.user_id',
-	// 			knex.raw(
-	// 				`json_strip_nulls(
-	// 			json_build_object(
-	// 				'track', sessions.track,
-	// 				'day,' sessions.day,
-	// 				'date', sessions.date,
-	// 				'time_start', sessions.time_start,
-	// 				'time_end', sessions.time_end,
-	// 				'location', sessions.location,
-	// 				'name', sessions.name,
-	// 				'description', sessions.description,
-	// 				'background', sessions.background,
-	// 				'objective_1', sessions.objective_1,
-	// 				'objective_2', sessions.objective_2,
-	// 				'objective_3', sessions.objective_3,
-	// 				'objective_4', sessions.objective_4,
-	// 				'speaker', sessions.speaker
-	// 			)
-	// 		  ) AS "sessions"`
-	// 			),
-	// 			knex.raw(
-	// 				`json_strip_nulls(
-	// 			json_build_object(
-	// 			  'id', users.id,
-	// 			  'username', users.username,
-	// 			  'fullname', users.fullname,
-	// 			)
-	// 		  ) AS "users"`
-	// 			)
-	// 		)
-	// 		.where('schedule.user_id', loginUserId)
-	// 		.leftJoin('sessions', 'sessions.id', 'schedule.session_id')
-	// 		.leftJoin('users', 'users.id', 'schedule.user_id');
-	// },
-
 	insertSchedule(knex, newScheduleItem) {
 		return knex
 			.insert(newScheduleItem)
