@@ -93,7 +93,7 @@ commentRouter
 		console.log(
 			'----------------- comments-router inside get with commentId in url'
 		);
-		res.json(commentService.serializeArticle(res.comment));
+		res.json(commentService.serializeComment(res.comment));
 	})
 	.delete((req, res, next) => {
 		const { id } = req.params;
@@ -120,6 +120,8 @@ commentRouter
 		const { id } = req.params;
 		const { text, rating } = req.body;
 		const commentToUpdate = { text, rating };
+
+		console.log(req.body);
 
 		const numberOfValues = Object.values(commentToUpdate).filter(Boolean)
 			.length;
