@@ -11,8 +11,8 @@ const commentService = {
 	// 		.first();
 	// },
 
-	getById(db, id) {
-		return db
+	getById(knex, id) {
+		return knex
 			.from(`comments as comm`)
 			.select(
 				'comm.id',
@@ -20,7 +20,7 @@ const commentService = {
 				'comm.rating',
 				'comm.date_created',
 				'comm.session_id',
-				db.raw(
+				knex.raw(
 					`row_to_json(
 				  (SELECT tmp FROM (
 					SELECT
@@ -48,16 +48,26 @@ const commentService = {
 			.then(([comment]) => comment)
 			.then(comment => commentService.getById(knex, comment.id));
 	},
+	// TBD does this do the exact same thing???
+	// insertBookmark(knex, newBookmark) {
+	// 	return knex
+	// 		.insert(newBookmark)
+	// 		.into(`bookmarks`)
+	// 		.returning('*')
+	// 		.then(rows => {
+	// 			return rows[0];
+	// 		});
+	// },
 
 	deleteComment(knex, id) {
 		return knex(table)
 			.where({ id })
 			.delete();
 	},
-	updateComment(knex, id, commentToUpdate) {
+	updateComment(knex, id, newCommentData) {
 		return knex(table)
 			.where({ id })
-			.update(commentToUpdate);
+			.update(newCommentData);
 	},
 
 	serializeComment(comment) {

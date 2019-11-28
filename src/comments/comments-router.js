@@ -73,7 +73,9 @@ commentRouter.route('/').post(requireAuth, jsonBodyParser, (req, res, next) => {
 				.status(201)
 				.location(path.posix.join(req.originalUrl, `/${comment.id}`))
 				.json(commentService.serializeComment(comment));
-			// GET ERROR: Cannot read property 'id' of undefined TypeError: Cannot read property 'id' of undefined
+			// GET ERROR:
+			// 		user is not defined ReferenceError: user is not defined
+			// at Object.serializeComment (/Library/WebServer/Documents/GitHub/Bloc/sessionhero-api/src/comments/comments-service.js:82:9)
 
 			// .json(res.comment);
 			// GET ERROR: "Unexpected end of JSON input"

@@ -89,9 +89,9 @@ const scheduleService = {
 			.where('id', id)
 			.first();
 	},
-	deleteSchedule(knex, id) {
+	deleteSchedule(knex, session_id, loginUserId) {
 		return knex(table)
-			.where({ id })
+			.where('id', session_id, 'user_id', loginUserId)
 			.delete();
 	},
 
