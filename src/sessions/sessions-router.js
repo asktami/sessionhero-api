@@ -17,7 +17,6 @@ sessionRouter
 		const knexInstance = req.app.get('db');
 
 		// loginUserId will only exist after login
-		//in sessions-service IF have loginUserId, use it, otherwise get all schedule records?
 		// loginUserId from jwt-auth
 		let loginUserId = '';
 
@@ -54,11 +53,7 @@ sessionRouter
 		sessionService
 			.getCommentsForSession(knexInstance, id)
 			.then(comments => {
-				console.log('---------- sessions-router comments = ');
-				// res.json(comments.map(comments));
-				// res.json(comments.map(sessionService.serializeSessionComment));
-
-				res.json(comments);
+				res.json(comments.map(sessionService.serializeSessionComment));
 			})
 			.catch(next);
 	});

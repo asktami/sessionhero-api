@@ -15,7 +15,6 @@ const jsonBodyParser = express.json();
 
 // get the user_id from the authorization header
 
-// POST
 commentRouter.route('/').post(requireAuth, jsonBodyParser, (req, res, next) => {
 	const { session_id, text, rating } = req.body;
 	const newComment = { session_id, text, rating };
@@ -47,17 +46,9 @@ commentRouter.route('/').post(requireAuth, jsonBodyParser, (req, res, next) => {
 		return res.status(400).send(error);
 	}
 
-	// QUESTION
-	// why are we going here when url = /comments/commentId
-	console.log('comments-router GOT HERE ---------------');
-	console.log('new comment req = ', req.user.id);
-	console.log('new comment = ', newComment);
-
 	// req.user is set in middleware/basic-auth
 	// this is the login user_id used to post comments
 	newComment.user_id = req.user.id; // from jwt-auth
-
-	console.log('new comment before insert = ', newComment);
 
 	commentService
 		.insertComment(knexInstance, newComment)
@@ -73,14 +64,6 @@ commentRouter.route('/').post(requireAuth, jsonBodyParser, (req, res, next) => {
 				.status(201)
 				.location(path.posix.join(req.originalUrl, `/${comment.id}`))
 				.json(commentService.serializeComment(comment));
-			// GET ERROR:
-			// 		user is not defined ReferenceError: user is not defined
-			// at Object.serializeComment (/Library/WebServer/Documents/GitHub/Bloc/sessionhero-api/src/comments/comments-service.js:82:9)
-
-			// .json(res.comment);
-			// GET ERROR: "Unexpected end of JSON input"
-
-			// return back all the fields in the comment that was created using serializeComment
 		})
 		.catch(next);
 });
@@ -90,9 +73,6 @@ commentRouter
 	.all(requireAuth)
 	.all(checkCommentExists)
 	.get((req, res) => {
-		console.log(
-			'----------------- comments-router inside get with commentId in url'
-		);
 		res.json(commentService.serializeComment(res.comment));
 	})
 	.delete((req, res, next) => {
@@ -120,8 +100,6 @@ commentRouter
 		const { id } = req.params;
 		const { text, rating } = req.body;
 		const commentToUpdate = { text, rating };
-
-		console.log(req.body);
 
 		const numberOfValues = Object.values(commentToUpdate).filter(Boolean)
 			.length;
@@ -161,8 +139,6 @@ commentRouter
 /* async/await syntax for promises */
 async function checkCommentExists(req, res, next) {
 	const { id } = req.params;
-
-	console.log('----------------- comments-router inside checkCommentExists');
 	try {
 		const comment = await commentService.getById(
 			req.app.get('db'),
@@ -178,14 +154,13 @@ async function checkCommentExists(req, res, next) {
 			});
 
 			return res.status(404).json({
-				error: `Comment doesn't exist`
+				error: `Comment Not Found`
 			});
 		}
 
 		res.comment = comment;
 		next();
 	} catch (error) {
-		console.log('comments-router error = ', error);
 		next(error);
 	}
 }

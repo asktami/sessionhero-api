@@ -2,15 +2,7 @@ const xss = require('xss');
 let table = 'comments';
 
 const commentService = {
-	// getById(knex, id) {
-	// 	return knex
-	// 		.from(table)
-	// 		.select('comments.*', 'users.username')
-	// 		.leftJoin('users', 'comments.user_id', 'users.id')
-	// 		.where('comments.id', id)
-	// 		.first();
-	// },
-
+	// join comments and users
 	getById(knex, id) {
 		return knex
 			.from(`comments as comm`)
@@ -19,6 +11,7 @@ const commentService = {
 				'comm.text',
 				'comm.rating',
 				'comm.date_created',
+				'comm.date_modified',
 				'comm.session_id',
 				knex.raw(
 					`row_to_json(
@@ -48,16 +41,6 @@ const commentService = {
 			.then(([comment]) => comment)
 			.then(comment => commentService.getById(knex, comment.id));
 	},
-	// TBD does this do the exact same thing???
-	// insertBookmark(knex, newBookmark) {
-	// 	return knex
-	// 		.insert(newBookmark)
-	// 		.into(`bookmarks`)
-	// 		.returning('*')
-	// 		.then(rows => {
-	// 			return rows[0];
-	// 		});
-	// },
 
 	deleteComment(knex, id) {
 		return knex(table)
@@ -78,13 +61,12 @@ const commentService = {
 			text: xss(comment.text),
 			rating: xss(comment.rating),
 			session_id: comment.session_id,
-			date_created: new Date(comment.date_created),
+			date_created: comment.date_created,
+			date_modified: comment.date_modified,
 			user: {
 				id: user.id,
 				username: user.username,
-				fullname: user.fullname,
-				date_created: new Date(user.date_created),
-				date_modified: new Date(user.date_modified) || null
+				fullname: user.fullname
 			}
 		};
 	}
