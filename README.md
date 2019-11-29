@@ -93,8 +93,8 @@ psql -U sessionhero -d sessionhero-test -a -f seeds/trunc.sessionhero_tables.sql
 | comments/:id          | PATCH       | UPDATE      | update single comment                           |
 | comments/:id          | DELETE      | DELETE      | delete single comment                           |
 | schedule              | GET         | READ        | get all scehdule records for the logged in user |
-| schedule/:id          | POST        | CREATE      | add new session to user's schedule              |
-| schedule/:id          | DELETE      | DELETE      | delete schedule record                          |
+| schedule/:sessionId   | POST        | CREATE      | add new session to user's schedule              |
+| schedule/:scheduleId  | DELETE      | DELETE      | delete schedule record                          |
 | users                 | POST        | CREATE      | add new user                                    |
 
 ## Scripts
