@@ -2,6 +2,7 @@ const xss = require('xss');
 let table = 'sessions';
 
 const sessionService = {
+	// join with schedule records only if have login user id
 	getAllSessions(db, loginUserId = '') {
 		if (loginUserId) {
 			return db(
@@ -85,6 +86,7 @@ const sessionService = {
 				'comm.user_id',
 				'comm.session_id',
 				'comm.date_created',
+				'comm.date_modified',
 				db.raw(
 					`json_strip_nulls(
 				row_to_json(
@@ -92,9 +94,7 @@ const sessionService = {
 					SELECT
 					  usr.id,
 					  usr.username,
-					  usr.fullname,
-					  usr.date_created,
-					  usr.date_modified
+					  usr.fullname
 				  ) tmp)
 				)
 			  ) AS "user"`
@@ -136,13 +136,12 @@ const sessionService = {
 			text: xss(comment.text),
 			rating: xss(comment.rating),
 			session_id: comment.session_id,
-			date_created: new Date(comment.date_created),
+			date_created: comment.date_created,
+			date_modified: comment.date_modified,
 			user: {
 				id: user.id,
 				username: user.username,
-				fullname: user.fullname,
-				date_created: new Date(user.date_created),
-				date_modified: new Date(user.date_modified) || null
+				fullname: user.fullname
 			}
 		};
 	}

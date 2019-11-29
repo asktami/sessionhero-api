@@ -1,21 +1,18 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const config = require('../src/config');
 
 function makeUsersArray() {
 	return [
 		{
-			id: 1,
 			username: 'test-user-1',
 			password: 'password',
-			fullname: 'Test user 1',
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			fullname: 'Test user 1'
 		},
 		{
-			id: 2,
 			username: 'test-user-2',
 			password: 'password',
-			fullname: 'Test user 2',
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			fullname: 'Test user 2'
 		}
 	];
 }
@@ -192,36 +189,28 @@ function makeSessionsArray() {
 function makeCommentsArray(users, sessions) {
 	return [
 		{
-			id: 1,
 			rating: 2,
 			text: 'First test comment!',
 			session_id: sessions[0].id,
-			user_id: users[0].id,
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			user_id: users[0].id
 		},
 		{
-			id: 2,
 			rating: 3,
 			text: 'Second test review!',
 			session_id: sessions[0].id,
-			user_id: users[1].id,
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			user_id: users[1].id
 		},
 		{
-			id: 3,
 			rating: 1,
 			text: 'Third test review!',
 			session_id: sessions[1].id,
-			user_id: users[0].id,
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			user_id: users[0].id
 		},
 		{
-			id: 4,
 			rating: 5,
 			text: 'Fourth test review!',
 			session_id: sessions[1].id,
-			user_id: users[1].id,
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			user_id: users[1].id
 		}
 	];
 }
@@ -229,40 +218,28 @@ function makeCommentsArray(users, sessions) {
 function makeScheduleArray(users, sessions) {
 	return [
 		{
-			id: 1,
 			session_id: sessions[0].id,
-			user_id: users[0].id,
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			user_id: users[0].id
 		},
 		{
-			id: 2,
 			session_id: sessions[1].id,
-			user_id: users[0].id,
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			user_id: users[0].id
 		},
 		{
-			id: 3,
 			session_id: sessions[2].id,
-			user_id: users[0].id,
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			user_id: users[0].id
 		},
 		{
-			id: 4,
 			session_id: sessions[0].id,
-			user_id: users[1].id,
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			user_id: users[1].id
 		},
 		{
-			id: 5,
 			session_id: sessions[1].id,
-			user_id: users[1].id,
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			user_id: users[1].id
 		},
 		{
-			id: 6,
 			session_id: sessions[2].id,
-			user_id: users[1].id,
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			user_id: users[1].id
 		}
 	];
 }
@@ -310,12 +287,12 @@ function makeExpectedSession(sessions, comments = [], users = []) {
 }
 
 // schedule table
-// pass in testSessions[0], testUsers[0]
-function makeExpectedSchedule(session, user) {
+// pass in testUsers[0], testSessions[0]
+function makeExpectedSchedule(scheduleId, user, session) {
 	return {
-		id: schedule.id,
-		user_id: user_id,
-		session_id: session_id
+		id: scheduleId,
+		user_id: user.id,
+		session_id: session.id
 	};
 }
 
@@ -352,6 +329,14 @@ function makeExpectedSessionComments(users, sessionId, comments) {
 	});
 }
 
+function makeExpectedComment(session) {
+	return {
+		session_id: session.id,
+		text: 'test comment text',
+		rating: 'test comment rating'
+	};
+}
+
 //  users can only add/update/delete Comments
 // pass in testUsers[0], testSessions[0]
 function makeMaliciousComment(user, session) {
@@ -384,16 +369,40 @@ function makeFixtures() {
 	return { testUsers, testSessions, testComments, testSchedules };
 }
 
+// sessions_id is a user generated text string
+
 function cleanTables(db) {
-	return db.raw(
-		`TRUNCATE
-		comments,
-		schedule,
-		sessions,
-		users,
-      RESTART IDENTITY CASCADE`
+	return db.transaction(trx =>
+		trx.raw(`TRUNCATE comments RESTART IDENTITY CASCADE;
+	TRUNCATE schedule  RESTART IDENTITY CASCADE;
+	TRUNCATE sessions  RESTART IDENTITY CASCADE;
+	TRUNCATE users RESTART IDENTITY CASCADE;`)
 	);
 }
+
+// function cleanTables(db) {
+// 	return db.transaction(trx =>
+// 		trx
+// 			.raw(
+// 				`TRUNCATE
+//         comments,
+// 		schedule,
+// 		sessions,
+// 		users
+//       `
+// 			)
+// 			.then(() =>
+// 				Promise.all([
+// 					trx.raw(`ALTER SEQUENCE comments_id_seq minvalue 0 START WITH 1`),
+// 					trx.raw(`ALTER SEQUENCE schedule_id_seq minvalue 0 START WITH 1`),
+// 					trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
+// 					trx.raw(`SELECT setval('comments_id_seq', 0)`),
+// 					trx.raw(`SELECT setval('schedule_id_seq', 0)`),
+// 					trx.raw(`SELECT setval('users_id_seq', 0)`)
+// 				])
+// 			)
+// 	);
+// }
 
 // to bcrypt passwords
 function seedUsers(db, users) {
@@ -404,10 +413,10 @@ function seedUsers(db, users) {
 	return db
 		.into('users')
 		.insert(preppedUsers)
-		.then(() =>
+		.then(() => {
 			// update the auto sequence to stay in sync
-			db.raw(`SELECT setval('users_id_seq', ?)`, [users[users.length - 1].id])
-		);
+			db.raw(`SELECT setval('users_id_seq', ?)`, [users[users.length - 1].id]);
+		});
 }
 
 // with bcrypt passwords
@@ -429,13 +438,25 @@ function seedMaliciousComment(db, user, comment) {
 	);
 }
 
-function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+function makeAuthHeader(user, secret = config.JWT_SECRET) {
 	const token = jwt.sign({ user_id: user.id }, secret, {
 		subject: user.username,
+		expiresIn: config.JWT_EXPIRY,
 		algorithm: 'HS256'
 	});
 	return `Bearer ${token}`;
 }
+
+// from auth-service:
+// const sub = dbUser.username;
+// const payload = { user_id: dbUser.id };
+// createJwt(subject, payload) {
+// 	return jwt.sign(payload, config.JWT_SECRET, {
+// 		subject,
+// 		expiresIn: config.JWT_EXPIRY,
+// 		algorithm: 'HS256'
+// 	});
+// },
 
 module.exports = {
 	makeUsersArray,

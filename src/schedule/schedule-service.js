@@ -7,6 +7,7 @@ const scheduleService = {
 		return knex
 			.select(
 				'schedule.id',
+				'schedule.id as schedule_id',
 				'session_id',
 				'user_id',
 				'track',
@@ -47,9 +48,9 @@ const scheduleService = {
 			.where('id', id)
 			.first();
 	},
-	deleteSchedule(knex, session_id, loginUserId) {
+	deleteSchedule(knex, id) {
 		return knex(table)
-			.where('id', session_id, 'user_id', loginUserId)
+			.where('id', id)
 			.delete();
 	},
 

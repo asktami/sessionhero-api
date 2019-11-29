@@ -1,10 +1,10 @@
 const app = require('../src/app');
 
 describe(`App Server endpoints - Unauthorized requests`, () => {
-	it(`responds with 401 Unauthorized for GET /`, () => {
+	it('GET / responds with 200 containing "Hello, world!"', () => {
 		return supertest(app)
 			.get('/')
-			.expect(401, { error: 'Unauthorized request' });
+			.expect(200, 'Hello, world!');
 	});
 });
 

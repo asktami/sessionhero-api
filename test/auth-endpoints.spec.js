@@ -1,9 +1,10 @@
 const knex = require('knex');
 const jwt = require('jsonwebtoken');
+const config = require('../src/config');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
-describe('Auth Endpoints', function() {
+describe.only('Auth Endpoints', function() {
 	let db;
 
 	const { testUsers } = helpers.makeFixtures();
@@ -72,10 +73,10 @@ describe('Auth Endpoints', function() {
 
 			const expectedToken = jwt.sign(
 				{ user_id: testUser.id },
-				process.env.JWT_SECRET,
+				config.JWT_SECRET,
 				{
 					subject: testUser.username,
-					expiresIn: process.env.JWT_EXPIRY,
+					expiresIn: config.JWT_EXPIRY,
 					algorithm: 'HS256'
 				}
 			);
@@ -94,10 +95,10 @@ describe('Auth Endpoints', function() {
 		it(`responds 200 and JWT auth token using secret`, () => {
 			const expectedToken = jwt.sign(
 				{ user_id: testUser.id },
-				process.env.JWT_SECRET,
+				config.JWT_SECRET,
 				{
 					subject: testUser.username,
-					expiresIn: process.env.JWT_EXPIRY,
+					expiresIn: config.JWT_EXPIRY,
 					algorithm: 'HS256'
 				}
 			);

@@ -4,9 +4,9 @@ process.env.JWT_SECRET = 'test-jwt-secret';
 
 require('dotenv').config();
 
-process.env.TEST_DATABASE_URL =
-	process.env.TEST_DATABASE_URL ||
-	'postgresql://sessionhero@localhost/sessionhero';
+// process.env.TEST_DATABASE_URL =
+process.env.TEST_DATABASE_URL ||
+	'postgresql://sessionhero@localhost/sessionhero-test';
 
 const { expect } = require('chai');
 const supertest = require('supertest');

@@ -57,16 +57,41 @@ scheduleRouter
 				res.json(schedule.map(scheduleService.serializeSchedule));
 			})
 			.catch(next);
-	})
-	.post(requireAuth, jsonBodyParser, (req, res, next) => {
-		// add session to schedule, with loginUserId + session_id
+	});
 
-		const { session_id } = req.body;
-		const newScheduleItem = { session_id };
+scheduleRouter
+	.route('/:id') // either session_id for post OR schedule_id for delete
+	.all(requireAuth)
+	.delete((req, res, next) => {
+		const { id } = req.params;
 		const knexInstance = req.app.get('db');
 
-		for (const field of ['session_id']) {
-			if (!req.body[field]) {
+		scheduleService
+			.deleteSchedule(knexInstance, id)
+			.then(numRowsAffected => {
+				logger.info({
+					message: `Schedule with id ${id} deleted.`,
+					request: `${req.originalUrl}`,
+					method: `${req.method}`,
+					ip: `${req.ip}`
+				});
+
+				// need to send back message instead of .end()
+				res.status(204).json({
+					message: true
+				});
+			})
+			.catch(next);
+	})
+	.post(requireAuth, jsonBodyParser, (req, res, next) => {
+		const { id } = req.params;
+		const newScheduleItem = { session_id: id };
+		const knexInstance = req.app.get('db');
+
+		console.log('post to schedule id = ', id);
+
+		for (const field of ['id']) {
+			if (!req.params[field]) {
 				logger.error({
 					message: `${field} is required`,
 					request: `${req.originalUrl}`,
@@ -97,62 +122,6 @@ scheduleRouter
 					.status(201)
 					.location(path.posix.join(req.originalUrl))
 					.json(scheduleService.serializeSchedule(schedule));
-			})
-			.catch(next);
-	});
-
-scheduleRouter
-	.route('/:session_id')
-	.all(requireAuth)
-	// .all((req, res, next) => {
-	// 	const { id } = req.params;
-	// 	const knexInstance = req.app.get('db');
-	// 	scheduleService
-	// 		.getById(knexInstance, id)
-	// 		.then(schedule => {
-	// 			if (!schedule) {
-	// 				logger.error({
-	// 					message: `Schedule with id ${id} not found.`,
-	// 					request: `${req.originalUrl}`,
-	// 					method: `${req.method}`,
-	// 					ip: `${req.ip}`
-	// 				});
-	// 				return res.status(404).json({
-	// 					error: { message: `Schedule Not Found` }
-	// 				});
-	// 			}
-	// 			res.schedule = schedule;
-	// 			next();
-	// 		})
-	// 		.catch(next);
-	// })
-	// .get((req, res) => {
-	// 	res.json(scheduleService.serializeSchedule(res.schedule));
-	// })
-	.delete((req, res, next) => {
-		const { session_id } = req.params;
-		const knexInstance = req.app.get('db');
-
-		// from jwt-auth
-		// req.user is set in middleware/basic-auth
-		// this is the login user id
-		let loginUserId = req.user.id;
-
-		// find record with id (session_id) + loginUserId to delete
-		scheduleService
-			.deleteSchedule(knexInstance, session_id, loginUserId)
-			.then(numRowsAffected => {
-				logger.info({
-					message: `Schedule with id ${id} deleted.`,
-					request: `${req.originalUrl}`,
-					method: `${req.method}`,
-					ip: `${req.ip}`
-				});
-
-				// need to send back message instead of .end()
-				res.status(204).json({
-					message: true
-				});
 			})
 			.catch(next);
 	});

@@ -76,11 +76,7 @@ describe('Comments Endpoints', function() {
 
 			it('responds with 200 and the specified comment', () => {
 				const commentId = 2;
-				const expectedComment = helpers.makeExpectedComment(
-					testUsers,
-					testSessions[0],
-					testComments
-				);
+				const expectedComment = helpers.makeExpectedComment(testSessions[0]);
 
 				return supertest(app)
 					.get(`/api/comments/${commentId}`)
@@ -90,7 +86,7 @@ describe('Comments Endpoints', function() {
 		});
 	});
 
-	// TBD POST SESSION COMMENTS ************************************
+	// POST SESSION COMMENTS ************************************
 	describe(`POST /api/sessions/:sessionId/comments/`, () => {
 		beforeEach('insert comments', () =>
 			helpers.seedTables(db, testUsers, testSessions, testComments)
@@ -150,7 +146,6 @@ describe('Comments Endpoints', function() {
 			});
 		});
 
-		// TBD DO NOT UNDERSTAND THIS
 		// test what happens when try to post xss attack
 		context(`Given an XSS attack comment`, () => {
 			let testUser = testUsers[0];
@@ -176,7 +171,7 @@ describe('Comments Endpoints', function() {
 		});
 	});
 
-	// TBD DELETE COMMENTS
+	// DELETE COMMENT
 	describe(`DELETE /api/comments/:commentId`, () => {
 		context(`Given no comment`, () => {
 			it(`responds with 404`, () => {
@@ -224,7 +219,7 @@ describe('Comments Endpoints', function() {
 		});
 	});
 
-	// TBD PATCH COMMENTS
+	// PATCH COMMENTS
 	describe(`PATCH /api/comments/:commentId`, () => {
 		context(`Given no comment`, () => {
 			it(`responds with 404`, () => {
