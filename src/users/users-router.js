@@ -15,8 +15,9 @@ userRouter.post('/', jsonBodyParser, (req, res, next) => {
 			});
 	}
 
-	const usernameError = userService.validateUsername(username);
-	if (usernameError) return res.status(400).json({ error: usernameError });
+	// on hold
+	// const usernameError = userService.validateUsername(username);
+	// if (usernameError) return res.status(400).json({ error: usernameError });
 
 	const passwordError = userService.validatePassword(password);
 	if (passwordError) return res.status(400).json({ error: passwordError });

@@ -19,8 +19,6 @@ commentRouter.route('/').post(requireAuth, jsonBodyParser, (req, res, next) => {
 	const { session_id, comment, rating } = req.body;
 	const newComment = { session_id, comment, rating };
 
-	console.log('------------ COMMENTS-ROUTER comment = ', newComment);
-
 	const knexInstance = req.app.get('db');
 
 	for (const [key, value] of Object.entries(newComment))

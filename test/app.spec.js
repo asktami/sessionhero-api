@@ -1,5 +1,6 @@
 const app = require('../src/app');
 
+// Happy Path testing
 describe(`App Server endpoints - Unauthorized requests`, () => {
 	it('GET / responds with 200 containing "Hello, world!"', () => {
 		return supertest(app)

@@ -26,7 +26,7 @@ app.use(cors());
 app.use(helmet());
 app.use(helmet.hidePoweredBy());
 
-// TBD DO NOT USE validate bearer token b/c have unprotected/protected routes with jwt!!!
+// TBD DO NOT USE validate bearer token b/c doint protected routes with jwt!!!
 // app.use(validateBearerToken);
 
 app.use('/api/sessions', sessionsRouter);

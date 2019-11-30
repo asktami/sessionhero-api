@@ -3,7 +3,7 @@ const xss = require('xss');
 
 const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
 
-const UsersService = {
+const userService = {
 	hasUserWithUserName(db, username) {
 		return db('users')
 			.where({ username })
@@ -17,17 +17,12 @@ const UsersService = {
 			.returning('*')
 			.then(([user]) => user);
 	},
-	validateUsername(username) {
-		if (username.includes(' ')) {
-			return 'Username can not contain spaces';
-		}
-	},
 	validatePassword(password) {
 		if (password.length < 8) {
-			return 'Password can not be longer than 8 characters';
+			return 'Password be longer than 8 characters';
 		}
 		if (password.length > 72) {
-			return 'Password can not be less than 72 characters';
+			return 'Password be less than 72 characters';
 		}
 		if (password.startsWith(' ') || password.endsWith(' ')) {
 			return 'Password must not start or end with empty spaces';
@@ -36,6 +31,11 @@ const UsersService = {
 			return 'Password must contain one upper case, lower case, number and special character';
 		}
 		return null;
+	},
+	validateUsername(username) {
+		if (username.includes(' ')) {
+			return 'Username can not contain spaces';
+		}
 	},
 	hashPassword(password) {
 		return bcrypt.hash(password, 12);
@@ -50,4 +50,4 @@ const UsersService = {
 	}
 };
 
-module.exports = UsersService;
+module.exports = userService;

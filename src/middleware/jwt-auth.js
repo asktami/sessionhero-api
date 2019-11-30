@@ -1,7 +1,6 @@
 const AuthService = require('../auth/auth-service');
 
-// NOTE the jwt token has the logged in user's username and is used to find the logged in user (via their username), then get their user_id from the database
-// then the
+// NOTE the jwt token has the logged in user's user_id and username and is used to find the logged in user (via their username), then get their user record from the database
 
 function requireAuth(req, res, next) {
 	const authToken = req.get('Authorization') || '';
@@ -10,7 +9,6 @@ function requireAuth(req, res, next) {
 
 	if (authToken.toLowerCase().startsWith('none')) {
 		// to handle when hit sessionListPage before login
-		console.log('jwt none');
 		next();
 	} else {
 		if (!authToken.toLowerCase().startsWith('bearer ')) {

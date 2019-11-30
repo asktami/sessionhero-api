@@ -2,8 +2,6 @@ const AuthService = require('../auth/auth-service');
 
 function requireAuth(req, res, next) {
 	// to check that authorization header has the basic token
-	// console.log('middleware basic-auth requireAuth');
-	// console.log(req.get('Authorization'));
 
 	const authToken = req.get('Authorization') || '';
 
@@ -22,14 +20,12 @@ function requireAuth(req, res, next) {
 	);
 
 	if (!tokenUserName || !tokenPassword) {
-		console.log('basic-auth');
 		return res.status(401).json({ error: 'Unauthorized request' });
 	}
 
 	// query the database for a user matching this username
 	// check if username not found or username found and password is incorrect
 	AuthService.getUserWithUserName(req.app.get('db'), tokenUserName)
-	console.log('basic-auth');
 		.then(user => {
 			if (!user) {
 				return res.status(401).json({ error: 'Unauthorized request' });
@@ -42,11 +38,7 @@ function requireAuth(req, res, next) {
 							.status(401)
 							.json({ error: 'Unauthorized request basic-auth' });
 					}
-
 					req.user = user;
-
-					console.log('API basic-auth req.user.id = ', req.user.id);
-
 					next();
 				}
 			);

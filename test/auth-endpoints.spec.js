@@ -4,6 +4,7 @@ const config = require('../src/config');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
+// Happy Path testing
 describe('Auth Endpoints', function() {
 	let db;
 

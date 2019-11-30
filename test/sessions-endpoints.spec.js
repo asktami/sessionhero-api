@@ -2,6 +2,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
+// Happy Path testing
 describe('Sessions Endpoints', function() {
 	let db;
 
@@ -25,14 +26,6 @@ describe('Sessions Endpoints', function() {
 	afterEach('cleanup', () => helpers.cleanTables(db));
 
 	describe(`GET /api/sessions`, () => {
-		context(`Given no sessions`, () => {
-			it(`responds with 200 and an empty list`, () => {
-				return supertest(app)
-					.get('/api/sessions')
-					.expect(200, []);
-			});
-		});
-
 		context('Given there are sessions in the database', () => {
 			beforeEach('insert sessions', () =>
 				helpers.seedTables(
@@ -48,6 +41,8 @@ describe('Sessions Endpoints', function() {
 				const expectedSessions = testSessions.map(session =>
 					helpers.makeExpectedSession(session)
 				);
+
+				// TODO need to get all sessions with no login userId and in result no schedule_id and no user_id
 				return supertest(app)
 					.get('/api/sessions')
 					.expect(200, expectedSessions);
@@ -56,18 +51,6 @@ describe('Sessions Endpoints', function() {
 	});
 
 	describe(`GET /api/sessions/:session_id`, () => {
-		context(`Given no sessions`, () => {
-			beforeEach(() => helpers.seedUsers(db, testUsers));
-
-			it(`responds with 404`, () => {
-				const sessionId = 123456;
-				return supertest(app)
-					.get(`/api/sessions/${sessionId}`)
-					.set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-					.expect(404, { error: `Session doesn't exist` });
-			});
-		});
-
 		context('Given there are sessions in the database', () => {
 			beforeEach('insert sessions', () =>
 				helpers.seedTables(
@@ -80,11 +63,10 @@ describe('Sessions Endpoints', function() {
 			);
 
 			it('responds with 200 and the specified session', () => {
-				const sessionId = 'BUS04';
+				const sessionId = testSessions[0].id;
 
 				const expectedSessions = helpers.makeExpectedSession(testSessions[0]);
 
-				// TBD NOTE not getting loginUserId from AuthHeader for search!!!
 				return supertest(app)
 					.get(`/api/sessions/${sessionId}`)
 					.set('Authorization', helpers.makeAuthHeader(testUsers[0]))
@@ -94,18 +76,6 @@ describe('Sessions Endpoints', function() {
 	});
 
 	describe(`GET /api/sessions/:session_id/comments`, () => {
-		context(`Given no sessions`, () => {
-			beforeEach(() => helpers.seedUsers(db, testUsers));
-
-			it(`responds with 404`, () => {
-				const sessionId = 123456;
-				return supertest(app)
-					.get(`/api/sessions/${sessionId}/comments`)
-					.set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-					.expect(404, { error: `Session doesn't exist` });
-			});
-		});
-
 		context('Given there are comments for session in the database', () => {
 			beforeEach('insert sessions', () =>
 				helpers.seedTables(
@@ -118,11 +88,15 @@ describe('Sessions Endpoints', function() {
 			);
 
 			it('responds with 200 and the specified comments', () => {
-				const sessionId = testSessions[0].id;
-				const expectedComments = helpers.makeExpectedSessionComments(
-					testUsers[0],
-					testSessions[0],
-					testComments[0]
+				let userId = testUsers[0].id;
+				let sessionId = testSessions[0].id;
+
+				const filteredComments = testComments.filter(
+					comment => comment.user_id === userId
+				);
+
+				const expectedComments = filteredComments.map(comment =>
+					helpers.makeExpectedSessionComments(comment, testUsers)
 				);
 
 				return supertest(app)

@@ -23,14 +23,10 @@ scheduleRouter
 		const loginUserId = req.user.id; // from jwt-auth
 		const knexInstance = req.app.get('db');
 
-		console.log('req.user = ', req.user);
-		console.log('schedule-router LOGIN USER ID = ', loginUserId);
-
 		scheduleService
 			.getSchedule(knexInstance, loginUserId)
 			.then(schedule => {
 				if (!schedule) {
-					console.log('schedule not found');
 					logger.error({
 						message: `Schedule with for loginUserId ${loginUserId} not found.`,
 						request: `${req.originalUrl}`,
@@ -38,22 +34,9 @@ scheduleRouter
 						ip: `${req.ip}`
 					});
 					return res.status(404).json({
-						error: {
-							message: `Schedule with for loginUserId ${loginUserId} not found.`
-						}
+						error: `Schedule with for loginUserId ${loginUserId} not found.`
 					});
 				}
-				console.log('********************');
-				console.log('********************');
-				console.log('******************** schedule.length = ', schedule.length);
-				console.log('******************** schedule = ', schedule);
-
-				var ts = new Date();
-				console.log(ts.toDateString());
-				console.log(ts.toTimeString());
-
-				console.log('********************');
-				console.log('********************');
 				res.json(schedule.map(scheduleService.serializeSchedule));
 			})
 			.catch(next);
@@ -88,8 +71,6 @@ scheduleRouter
 		const newScheduleItem = { session_id: id };
 		const knexInstance = req.app.get('db');
 
-		console.log('post to schedule id = ', id);
-
 		for (const field of ['id']) {
 			if (!req.params[field]) {
 				logger.error({
@@ -99,7 +80,7 @@ scheduleRouter
 					ip: `${req.ip}`
 				});
 				return res.status(400).send({
-					error: { message: `'${field}' is required` }
+					error: `'${field}' is required`
 				});
 			}
 		}

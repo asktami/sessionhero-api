@@ -18,7 +18,9 @@ describe('Users Endpoints', function() {
 	});
 
 	after('disconnect from db', () => db.destroy());
+
 	before('cleanup', () => helpers.cleanTables(db));
+
 	afterEach('cleanup', () => helpers.cleanTables(db));
 
 	describe(`POST /api/users`, () => {
@@ -140,7 +142,6 @@ describe('Users Endpoints', function() {
 						expect(res.body).to.have.property('id');
 						expect(res.body.username).to.eql(newUser.username);
 						expect(res.body.fullname).to.eql(newUser.fullname);
-						expect(res.body.nickname).to.eql('');
 						expect(res.body).to.not.have.property('password');
 						expect(res.headers.location).to.eql(`/api/users/${res.body.id}`);
 						const expectedDate = new Date().toLocaleString('en', {
@@ -158,7 +159,7 @@ describe('Users Endpoints', function() {
 							.then(row => {
 								expect(row.username).to.eql(newUser.username);
 								expect(row.fullname).to.eql(newUser.fullname);
-								expect(row.nickname).to.eql(null);
+
 								const expectedDate = new Date().toLocaleString('en', {
 									timeZone: 'UTC'
 								});

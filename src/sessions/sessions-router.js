@@ -9,7 +9,7 @@ const { requireAuth } = require('../middleware/jwt-auth');
 
 const sessionRouter = express.Router();
 
-// UNprotected endpoint (getAllSessions)
+// getAllSessions works both as unprotected and protected
 sessionRouter
 	.route('/')
 	.all(requireAuth)
