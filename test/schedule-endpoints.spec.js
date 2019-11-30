@@ -63,12 +63,12 @@ describe('Schedule Endpoints', function() {
 				helpers.seedUsers(db, testUsers, testSessions, testSchedules)
 			);
 
-			// send fake user_id = 999, a user with no schedule records
+			// send fake user_id = 3, a user with no schedule records
 			it(`responds with 404`, () => {
 				return supertest(app)
 					.get(`/api/schedule`)
-					.set('Authorization', helpers.makeAuthHeader(911))
-					.expect(404, { error: { message: `Schedule Not Found` } });
+					.set('Authorization', helpers.makeAuthHeader(testUsers[2]))
+					.expect(404, { error: `Schedule Not Found` });
 			});
 		});
 
@@ -135,7 +135,7 @@ describe('Schedule Endpoints', function() {
 					.send(newScheduleItem)
 					.set('Authorization', helpers.makeAuthHeader(testUsers[0]))
 					.expect(400, {
-						error: { message: `'${field}' is required` }
+						error: `'${field}' is required`
 					});
 			});
 		});
@@ -151,7 +151,7 @@ describe('Schedule Endpoints', function() {
 				return supertest(app)
 					.delete(`/api/schedule/${id}`)
 					.set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-					.expect(404, { error: { message: `Schedule record Not Found` } });
+					.expect(404, { error: `Schedule record Not Found` });
 			});
 		});
 

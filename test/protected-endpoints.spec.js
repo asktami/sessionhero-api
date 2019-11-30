@@ -89,11 +89,13 @@ describe('Protected endpoints', function() {
 						'Authorization',
 						helpers.makeAuthHeader(validUser, invalidSecret)
 					)
-					.expect(401, { error: `Unauthorized request` });
+					.expect(401, {
+						error: `JsonWebTokenError: invalid signature(Unauthorized request)`
+					});
 			});
 
 			it(`responds 401 'Unauthorized request' when invalid sub in payload`, () => {
-				const invalidUser = { user_name: 'user-not-existy', id: 1 };
+				const invalidUser = { username: 'user-not-existy', id: 1 };
 				return endpoint
 					.method(endpoint.path)
 					.set('Authorization', helpers.makeAuthHeader(invalidUser))

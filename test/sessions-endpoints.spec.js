@@ -2,10 +2,15 @@ const knex = require('knex');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
-describe('Sessions Endpoints', function() {
+describe.only('Sessions Endpoints', function() {
 	let db;
 
-	const { testUsers, testSessions, testComments } = helpers.makeFixtures();
+	const {
+		testUsers,
+		testSessions,
+		testComments,
+		testSchedules
+	} = helpers.makeFixtures();
 
 	before('make knex instance', () => {
 		db = knex({
@@ -30,12 +35,18 @@ describe('Sessions Endpoints', function() {
 
 		context('Given there are sessions in the database', () => {
 			beforeEach('insert sessions', () =>
-				helpers.seedTables(db, testUsers, testSessions, testComments)
+				helpers.seedTables(
+					db,
+					testUsers,
+					testSessions,
+					testComments,
+					testSchedules
+				)
 			);
 
 			it('responds with 200 and all of the sessions', () => {
 				const expectedSessions = testSessions.map(session =>
-					helpers.makeExpectedSession(testUsers, session, testComments)
+					helpers.makeExpectedSession(session)
 				);
 				return supertest(app)
 					.get('/api/sessions')
@@ -59,21 +70,25 @@ describe('Sessions Endpoints', function() {
 
 		context('Given there are sessions in the database', () => {
 			beforeEach('insert sessions', () =>
-				helpers.seedTables(db, testUsers, testSessions, testComments)
+				helpers.seedTables(
+					db,
+					testUsers,
+					testSessions,
+					testComments,
+					testSchedules
+				)
 			);
 
 			it('responds with 200 and the specified session', () => {
-				const sessionId = 2;
-				const expectedSession = helpers.makeExpectedSession(
-					testUsers,
-					testSessions[sessionId - 1],
-					testComments
-				);
+				const sessionId = 'BUS04';
 
+				const expectedSessions = helpers.makeExpectedSession(testSessions[0]);
+
+				// TBD NOTE not getting loginUserId from AuthHeader for search!!!
 				return supertest(app)
 					.get(`/api/sessions/${sessionId}`)
 					.set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-					.expect(200, expectedSession);
+					.expect(200, expectedSessions);
 			});
 		});
 	});
@@ -93,15 +108,21 @@ describe('Sessions Endpoints', function() {
 
 		context('Given there are comments for session in the database', () => {
 			beforeEach('insert sessions', () =>
-				helpers.seedTables(db, testUsers, testSessions, testComments)
+				helpers.seedTables(
+					db,
+					testUsers,
+					testSessions,
+					testComments,
+					testSchedules
+				)
 			);
 
 			it('responds with 200 and the specified comments', () => {
-				const sessionId = 1;
+				const sessionId = testSessions[0].id;
 				const expectedComments = helpers.makeExpectedSessionComments(
-					testUsers,
-					sessionId,
-					testComments
+					testUsers[0],
+					testSessions[0],
+					testComments[0]
 				);
 
 				return supertest(app)

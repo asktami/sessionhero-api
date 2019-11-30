@@ -15,6 +15,12 @@ function makeUsersArray() {
 			username: 'test-user-2',
 			password: 'password',
 			fullname: 'Test user 2'
+		},
+		{
+			id: 911,
+			username: 'test-user-3',
+			password: 'has-no-schedule',
+			fullname: 'Test user 3'
 		}
 	];
 }
@@ -192,39 +198,27 @@ function makeCommentsArray(users, sessions) {
 	return [
 		{
 			rating: 2,
-			text: 'First test comment!',
+			comment: 'First test comment!',
 			session_id: sessions[0].id,
-			user_id: users[0].id,
-			date_created: new Date('2029-01-22T16:28:32.615Z'),
-			date_modified: new Date('2029-01-22T16:28:32.615Z'),
-			fullname: users[0].fullname
+			user_id: users[0].id
 		},
 		{
 			rating: 3,
-			text: 'Second test review!',
+			comment: 'Second test review!',
 			session_id: sessions[0].id,
-			user_id: users[1].id,
-			date_created: '2029-01-22T16:28:32.615Z',
-			date_modified: new Date('2029-01-22T16:28:32.615Z'),
-			fullname: users[0].fullname
+			user_id: users[1].id
 		},
 		{
 			rating: 1,
-			text: 'Third test review!',
+			comment: 'Third test review!',
 			session_id: sessions[1].id,
-			user_id: users[0].id,
-			date_created: '2029-01-22T16:28:32.615Z',
-			date_modified: new Date('2029-01-22T16:28:32.615Z'),
-			fullname: users[1].fullname
+			user_id: users[0].id
 		},
 		{
 			rating: 5,
-			text: 'Fourth test review!',
+			comment: 'Fourth test review!',
 			session_id: sessions[1].id,
-			user_id: users[1].id,
-			date_created: '2029-01-22T16:28:32.615Z',
-			date_modified: new Date('2029-01-22T16:28:32.615Z'),
-			fullname: users[1].fullname
+			user_id: users[1].id
 		}
 	];
 }
@@ -258,53 +252,38 @@ function makeScheduleArray(users, sessions) {
 	];
 }
 
-// sessions + comments + users join table
-function makeExpectedSession(sessions, comments = [], users = []) {
-	const user = users.find(user => user.id === comments.user_id);
+// convert date from YYYY-MM-DD to MM-DD-YYYY
+function convertDate(dateStr) {
+	return Intl.DateTimeFormat('en-US').format(new Date(dateStr));
+}
 
-	const sessionComments = comments.filter(
-		comment => comment.session_id === sessions.id
-	);
-
-	const number_of_comments = comments.filter(
-		comment => comment.session_id === sessions.id
-	).length;
-
-	const average_comment_rating = calculateAverageReviewRating(sessionComments);
-
+// sessions
+function makeExpectedSession(session) {
 	return {
-		id: sessions.id,
-		date_created: sessions.date_created,
-		track: sessions.track,
-		day: sessions.day,
-		date: sessions.date,
-		time_start: sessions.time_start,
-		time_end: sessions.time_end,
-		location: sessions.location,
-		name: sessions.name,
-		description: sessions.description,
-		background: sessions.background,
-		objective_1: sessions.objective_1,
-		objective_2: sessions.objective_2,
-		objective_3: sessions.objective_3,
-		objective_4: sessions.objective_4,
-		speaker: sessions.speaker,
-		number_of_comments,
-		average_comment_rating,
-		user: {
-			id: user.id,
-			username: user.username,
-			fullname: user.fullname,
-			date_created: user.date_created.toISOString()
-		}
+		id: session.id,
+		session_id: session.id,
+		track: session.track,
+		day: session.day,
+		date: new Date(session.date),
+		time_start: session.time_start,
+		time_end: session.time_end,
+		location: session.location,
+		name: session.name,
+		description: session.description,
+		background: session.background,
+		objective_1: session.objective_1,
+		objective_2: session.objective_2,
+		objective_3: session.objective_3,
+		objective_4: session.objective_4,
+		speaker: session.speaker
 	};
 }
 
 // schedule table
-// pass in testUsers[0], testSessions[0]
-function makeExpectedSchedule(scheduleId, user, session) {
+// pass in testUsers[0], testSessions[0], testSchedules[0]
+function makeExpectedSchedule(schedule, user, session) {
 	return {
-		id: scheduleId,
+		id: schedule.id,
 		user_id: user.id,
 		session_id: session.id
 	};
@@ -319,51 +298,42 @@ function calculateAverageReviewRating(comments) {
 }
 
 // session + comments + users join table
-function makeExpectedSessionComments(users, sessionId, comments) {
-	const expectedComments = comments.filter(
-		comment => comment.session_id === sessionId
-	);
-
-	return expectedComments.map(comment => {
-		const commentUser = users.find(user => user.id === comment.user_id);
-
-		return {
-			id: comment.id,
-			text: comment.text,
-			rating: comment.rating,
-			date_created: comment.date_created.toISOString(),
-			date_modified: comment.date_modified.toISOString()
-		};
-	});
-}
-
-function makeExpectedComment(comment, session) {
+function makeExpectedSessionComments(user, session, comment) {
 	return {
-		id: comment.id,
-		text: comment.text,
+		user_id: user.id,
+		comment: comment.comment,
 		rating: comment.rating,
 		session_id: session.id,
-		date_created: comment.date_created,
-		date_modified: comment.date_modified
+		fullname: user.fullname
+	};
+}
+
+function makeExpectedComment(comment) {
+	console.log('------- inside helper makeExpectedComment comment = ', comment);
+	return {
+		id: comment.id,
+		comment: comment.comment,
+		rating: comment.rating,
+		session_id: comment.id,
+		user_id: comment.user_id
 	};
 }
 
 //  users can only add/update/delete Comments
 // pass in testUsers[0], testSessions[0]
-function makeMaliciousComment(user, session) {
+function makeMaliciousComment() {
 	const maliciousComment = {
-		user_id: user.id,
-		session_id: session.id,
-		date_created: new Date(),
-		text: 'Naughty naughty very naughty <script>alert("xss");</script>',
-		rating: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`
+		id: 911,
+		user_id: 1,
+		session_id: 'BUS04',
+		comment: 'Naughty naughty very naughty <script>alert("xss");</script>',
+		rating: 1
 	};
 
 	const expectedComment = {
-		...makeExpectedComment(user, session, maliciousComment),
-		text:
-			'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
-		rating: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
+		...maliciousComment,
+		comment:
+			'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;'
 	};
 	return {
 		maliciousComment,
@@ -379,7 +349,7 @@ function makeFixtures() {
 	return { testUsers, testSessions, testComments, testSchedules };
 }
 
-// sessions_id is a user generated text string
+// sessions_id is a user generated comment string
 
 function cleanTables(db) {
 	return db.transaction(trx =>
@@ -389,30 +359,6 @@ function cleanTables(db) {
 	TRUNCATE users RESTART IDENTITY CASCADE;`)
 	);
 }
-
-// function cleanTables(db) {
-// 	return db.transaction(trx =>
-// 		trx
-// 			.raw(
-// 				`TRUNCATE
-//         comments,
-// 		schedule,
-// 		sessions,
-// 		users
-//       `
-// 			)
-// 			.then(() =>
-// 				Promise.all([
-// 					trx.raw(`ALTER SEQUENCE comments_id_seq minvalue 0 START WITH 1`),
-// 					trx.raw(`ALTER SEQUENCE schedule_id_seq minvalue 0 START WITH 1`),
-// 					trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
-// 					trx.raw(`SELECT setval('comments_id_seq', 0)`),
-// 					trx.raw(`SELECT setval('schedule_id_seq', 0)`),
-// 					trx.raw(`SELECT setval('users_id_seq', 0)`)
-// 				])
-// 			)
-// 	);
-// }
 
 // to bcrypt passwords
 function seedUsers(db, users) {
@@ -440,13 +386,13 @@ function seedTables(db, users, sessions, comments = [], schedule = []) {
 		.then(() => schedule.length && db.into('schedule').insert(schedule));
 }
 
-// with bcrypt passwords
-// pass in testUsers[0], maliciousComment
-function seedMaliciousComment(db, user, comment) {
-	return seedUsers(db, [user]).then(() =>
-		db.into('comments').insert([comment])
-	);
-}
+// // with bcrypt passwords
+// // pass in testUsers[0], maliciousComment
+// function seedMaliciousComment(db, user, comment) {
+// 	return seedUsers(db, [user]).then(() =>
+// 		db.into('comments').insert([comment])
+// 	);
+// }
 
 function makeAuthHeader(user, secret = config.JWT_SECRET) {
 	const token = jwt.sign({ user_id: user.id }, secret, {
@@ -454,6 +400,7 @@ function makeAuthHeader(user, secret = config.JWT_SECRET) {
 		expiresIn: config.JWT_EXPIRY,
 		algorithm: 'HS256'
 	});
+
 	return `Bearer ${token}`;
 }
 
@@ -473,7 +420,7 @@ module.exports = {
 	makeFixtures,
 	cleanTables,
 	seedTables,
-	seedMaliciousComment,
+	// seedMaliciousComment,
 	makeAuthHeader,
 	seedUsers
 };
