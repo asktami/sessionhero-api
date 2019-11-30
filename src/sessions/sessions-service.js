@@ -132,17 +132,13 @@ const sessionService = {
 		const { user } = comment;
 		return {
 			id: comment.id,
-			user_id: comment.user_id,
+			user_id: user.id,
 			text: xss(comment.text),
 			rating: xss(comment.rating),
 			session_id: comment.session_id,
 			date_created: comment.date_created,
 			date_modified: comment.date_modified,
-			user: {
-				id: user.id,
-				username: user.username,
-				fullname: user.fullname
-			}
+			fullname: user.fullname
 		};
 	}
 };

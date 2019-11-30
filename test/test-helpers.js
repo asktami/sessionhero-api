@@ -5,11 +5,13 @@ const config = require('../src/config');
 function makeUsersArray() {
 	return [
 		{
+			id: 1,
 			username: 'test-user-1',
 			password: 'password',
 			fullname: 'Test user 1'
 		},
 		{
+			id: 2,
 			username: 'test-user-2',
 			password: 'password',
 			fullname: 'Test user 2'
@@ -192,25 +194,37 @@ function makeCommentsArray(users, sessions) {
 			rating: 2,
 			text: 'First test comment!',
 			session_id: sessions[0].id,
-			user_id: users[0].id
+			user_id: users[0].id,
+			date_created: new Date('2029-01-22T16:28:32.615Z'),
+			date_modified: new Date('2029-01-22T16:28:32.615Z'),
+			fullname: users[0].fullname
 		},
 		{
 			rating: 3,
 			text: 'Second test review!',
 			session_id: sessions[0].id,
-			user_id: users[1].id
+			user_id: users[1].id,
+			date_created: '2029-01-22T16:28:32.615Z',
+			date_modified: new Date('2029-01-22T16:28:32.615Z'),
+			fullname: users[0].fullname
 		},
 		{
 			rating: 1,
 			text: 'Third test review!',
 			session_id: sessions[1].id,
-			user_id: users[0].id
+			user_id: users[0].id,
+			date_created: '2029-01-22T16:28:32.615Z',
+			date_modified: new Date('2029-01-22T16:28:32.615Z'),
+			fullname: users[1].fullname
 		},
 		{
 			rating: 5,
 			text: 'Fourth test review!',
 			session_id: sessions[1].id,
-			user_id: users[1].id
+			user_id: users[1].id,
+			date_created: '2029-01-22T16:28:32.615Z',
+			date_modified: new Date('2029-01-22T16:28:32.615Z'),
+			fullname: users[1].fullname
 		}
 	];
 }
@@ -318,22 +332,19 @@ function makeExpectedSessionComments(users, sessionId, comments) {
 			text: comment.text,
 			rating: comment.rating,
 			date_created: comment.date_created.toISOString(),
-			user: {
-				id: commentUser.id,
-				username: commentUser.username,
-				fullname: commentUser.fullname,
-				date_created: commentUser.date_created.toISOString(),
-				date_modified: commentUser.date_modified || null
-			}
+			date_modified: comment.date_modified.toISOString()
 		};
 	});
 }
 
-function makeExpectedComment(session) {
+function makeExpectedComment(comment, session) {
 	return {
+		id: comment.id,
+		text: comment.text,
+		rating: comment.rating,
 		session_id: session.id,
-		text: 'test comment text',
-		rating: 'test comment rating'
+		date_created: comment.date_created,
+		date_modified: comment.date_modified
 	};
 }
 
@@ -341,7 +352,6 @@ function makeExpectedComment(session) {
 // pass in testUsers[0], testSessions[0]
 function makeMaliciousComment(user, session) {
 	const maliciousComment = {
-		id: 911,
 		user_id: user.id,
 		session_id: session.id,
 		date_created: new Date(),
@@ -446,17 +456,6 @@ function makeAuthHeader(user, secret = config.JWT_SECRET) {
 	});
 	return `Bearer ${token}`;
 }
-
-// from auth-service:
-// const sub = dbUser.username;
-// const payload = { user_id: dbUser.id };
-// createJwt(subject, payload) {
-// 	return jwt.sign(payload, config.JWT_SECRET, {
-// 		subject,
-// 		expiresIn: config.JWT_EXPIRY,
-// 		algorithm: 'HS256'
-// 	});
-// },
 
 module.exports = {
 	makeUsersArray,

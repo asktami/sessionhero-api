@@ -4,7 +4,7 @@ const config = require('../src/config');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
-describe.only('Auth Endpoints', function() {
+describe('Auth Endpoints', function() {
 	let db;
 
 	const { testUsers } = helpers.makeFixtures();
@@ -84,6 +84,7 @@ describe.only('Auth Endpoints', function() {
 				.post('/api/auth/login')
 				.send(userValidCreds)
 				.expect(200, {
+					user_id: testUser.id,
 					authToken: expectedToken
 				});
 		});
