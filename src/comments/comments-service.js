@@ -8,7 +8,7 @@ const commentService = {
 			.from(`comments as comm`)
 			.select(
 				'comm.id',
-				'comm.text',
+				'comm.comment',
 				'comm.rating',
 				'comm.date_created',
 				'comm.date_modified',
@@ -58,7 +58,7 @@ const commentService = {
 		return {
 			id: comment.id,
 			user_id: user.id,
-			text: xss(comment.text),
+			comment: xss(comment.comment),
 			rating: xss(comment.rating),
 			session_id: comment.session_id,
 			date_created: comment.date_created,

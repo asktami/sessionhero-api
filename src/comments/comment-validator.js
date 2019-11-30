@@ -2,11 +2,11 @@ const logger = require('../logger');
 
 const NO_ERRORS = null;
 
-// comment = text, rating, sessionId, userId
+// comment = comment, rating, sessionId, userId
 
-function getCommentValidationError({ text, rating }) {
-	if (text && text.length < 5) {
-		logger.error(`Invalid comment '${text}' supplied`);
+function getCommentValidationError({ comment, rating }) {
+	if (comment && comment.length < 5) {
+		logger.error(`Invalid comment '${comment}' supplied`);
 		return {
 			error: {
 				message: `The comment must be at least 5 characters`

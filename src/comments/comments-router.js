@@ -16,8 +16,10 @@ const jsonBodyParser = express.json();
 // get the user_id from the authorization header
 
 commentRouter.route('/').post(requireAuth, jsonBodyParser, (req, res, next) => {
-	const { session_id, text, rating } = req.body;
-	const newComment = { session_id, text, rating };
+	const { session_id, comment, rating } = req.body;
+	const newComment = { session_id, comment, rating };
+
+	console.log('------------ COMMENTS-ROUTER comment = ', newComment);
 
 	const knexInstance = req.app.get('db');
 
@@ -98,22 +100,20 @@ commentRouter
 	.patch(jsonBodyParser, (req, res, next) => {
 		const knexInstance = req.app.get('db');
 		const { id } = req.params;
-		const { text, rating } = req.body;
-		const commentToUpdate = { text, rating };
+		const { comment, rating } = req.body;
+		const commentToUpdate = { comment, rating };
 
 		const numberOfValues = Object.values(commentToUpdate).filter(Boolean)
 			.length;
 		if (numberOfValues === 0) {
 			logger.error({
-				message: `Invalid update without required fields: text and rating`,
+				message: `Invalid update without required fields: comment and rating`,
 				request: `${req.originalUrl}`,
 				method: `${req.method}`,
 				ip: `${req.ip}`
 			});
 			return res.status(400).json({
-				error: {
-					message: `Update must contain text and rating`
-				}
+				error: `Update must contain comment and rating`
 			});
 		}
 

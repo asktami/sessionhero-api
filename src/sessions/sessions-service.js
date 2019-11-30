@@ -81,7 +81,7 @@ const sessionService = {
 			.from('comments AS comm')
 			.select(
 				'comm.id',
-				'comm.text',
+				'comm.comment',
 				'comm.rating',
 				'comm.user_id',
 				'comm.session_id',
@@ -133,11 +133,9 @@ const sessionService = {
 		return {
 			id: comment.id,
 			user_id: user.id,
-			text: xss(comment.text),
+			comment: xss(comment.comment),
 			rating: xss(comment.rating),
 			session_id: comment.session_id,
-			date_created: comment.date_created,
-			date_modified: comment.date_modified,
 			fullname: user.fullname
 		};
 	}
