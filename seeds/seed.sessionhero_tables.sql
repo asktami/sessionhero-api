@@ -156,7 +156,7 @@ VALUES
 ,('TRA02',2);
 
 
-INSERT INTO comments (text, rating, date_created, session_id, user_id)
+INSERT INTO comments (comment, rating, date_created, session_id, user_id)
 VALUES
  ('This thing is amazing.',4,'2019-10-31 23:14:12.649275','BUS04',1)
 ,('Put a bird on it!',4,'2019-10-31 23:14:12.649275','BUS04',1)
