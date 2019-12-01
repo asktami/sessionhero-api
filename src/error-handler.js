@@ -5,9 +5,7 @@ function errorHandler(error, req, res, next) {
 	let response;
 	if (NODE_ENV === 'production') {
 		response = {
-			error: {
-				message: error.message + ' ' + error + ' in errorHandler'
-			}
+			error: 'server error: ' + error.message + ' ' + error
 		};
 	} else {
 		// include winston logging
@@ -19,10 +17,12 @@ function errorHandler(error, req, res, next) {
 				req.method
 			} - ${req.ip}`
 		);
-		response = { message: error.message, error };
+		response = {
+			error: 'server error: ' + error.message + ' ' + error + ' in errorHandler'
+		};
 	}
 
-	console.error(error.message, error);
+	// console.error(error.message, error);
 	res.status(500).json(response);
 }
 
