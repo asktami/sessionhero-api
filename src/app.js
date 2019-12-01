@@ -11,7 +11,7 @@ const scheduleRouter = require('./schedule/schedule-router');
 const usersRouter = require('./users/users-router');
 const authRouter = require('./auth/auth-router');
 
-const validateBearerToken = require('./validate-bearer-token');
+// const validateBearerToken = require('./validate-bearer-token');
 const errorHandler = require('./error-handler');
 
 const app = express();
