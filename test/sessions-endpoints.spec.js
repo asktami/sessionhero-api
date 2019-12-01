@@ -25,30 +25,31 @@ describe('Sessions Endpoints', function() {
 	before('cleanup', () => helpers.cleanTables(db));
 	afterEach('cleanup', () => helpers.cleanTables(db));
 
-	// describe(`GET /api/sessions`, () => {
-	// 	context('Given there are sessions in the database', () => {
-	// 		beforeEach('insert sessions', () =>
-	// 			helpers.seedTables(
-	// 				db,
-	// 				testUsers,
-	// 				testSessions,
-	// 				testComments,
-	// 				testSchedules
-	// 			)
-	// 		);
+	describe(`GET /api/sessions`, () => {
+		context('Given there are sessions in the database', () => {
+			beforeEach('insert sessions', () =>
+				helpers.seedTables(
+					db,
+					testUsers,
+					testSessions,
+					testComments,
+					testSchedules
+				)
+			);
 
-	// 		it('responds with 200 and all of the sessions', () => {
-	// 			const expectedSessions = testSessions.map(session =>
-	// 				helpers.makeExpectedSession(session)
-	// 			);
+			it('responds with 200 and all of the sessions', () => {
+				const expectedSessions = testSessions.map(session =>
+					helpers.makeExpectedSession(session)
+				);
 
-	// 			// TODO need to get all sessions with no login userId and in result no schedule_id and no user_id
-	// 			return supertest(app)
-	// 				.get('/api/sessions')
-	// 				.expect(200, expectedSessions);
-	// 		});
-	// 	});
-	// });
+				// can get all sessions with or without logging in
+				return supertest(app)
+					.get('/api/sessions')
+					.set('Authorization', `none`)
+					.expect(200, expectedSessions);
+			});
+		});
+	});
 
 	describe(`GET /api/sessions/:session_id`, () => {
 		context('Given there are sessions in the database', () => {
@@ -76,7 +77,7 @@ describe('Sessions Endpoints', function() {
 	});
 
 	describe(`GET /api/sessions/:session_id/comments`, () => {
-		context('Given there are comments for session in the database', () => {
+		context('Given there are comments for a session in the database', () => {
 			beforeEach('insert sessions', () =>
 				helpers.seedTables(
 					db,
@@ -87,7 +88,7 @@ describe('Sessions Endpoints', function() {
 				)
 			);
 
-			it('responds with 200 and the specified comments', () => {
+			it("responds with 200 and the specified session's comments", () => {
 				let userId = testUsers[0].id;
 				let sessionId = testSessions[0].id;
 
