@@ -22,7 +22,14 @@ app.use(
 	})
 );
 
-app.use(cors());
+const { CLIENT_ORIGIN } = require('./config');
+
+app.use(
+	cors({
+		origin: CLIENT_ORIGIN
+	})
+);
+
 app.use(helmet());
 app.use(helmet.hidePoweredBy());
 
