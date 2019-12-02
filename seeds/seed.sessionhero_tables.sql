@@ -11,7 +11,7 @@ TRUNCATE
 
 INSERT INTO users (username,  password, fullname)
 VALUES
-('demoUser', '$2a$12$otAlCQST//.2BWkPLhDC4.dCTapcHh6iC7.LLIeRRtAgP/MR.B5CK', 'Demo User'),
+('testUser', '$2a$12$QRHM7CT4rca6bLbqyej.3eCNagLOLU1.qZGEbbpXRClouaWO99ln.', 'Test User'),
   ('dunder', '$2a$12$ijvWD84EtJhC8AKFjT1cB.Bcm7T28M7/9pPs6E03Yl8z5rcd6Ld5.', 'Dunder Mifflin')
   ;
 
