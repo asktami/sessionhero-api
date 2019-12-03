@@ -8,7 +8,7 @@ function validateBearerToken(req, res, next) {
 		logger.error(`Unauthorized request to path: ${req.path}`);
 		return res
 			.status(401)
-			.json({ error: 'Unauthorized request INSIDE VALIDATE BEARER TOKEN' });
+			.json({ message: 'Unauthorized request INSIDE VALIDATE BEARER TOKEN' });
 	}
 
 	next();

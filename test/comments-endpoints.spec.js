@@ -29,7 +29,7 @@ describe('Comments Endpoints', function() {
 				return supertest(app)
 					.get(`/api/comments/${commentId}`)
 					.set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-					.expect(404, { error: `Comment Not Found` });
+					.expect(404, { message: `Comment Not Found` });
 			});
 		});
 
@@ -105,7 +105,7 @@ describe('Comments Endpoints', function() {
 						.send(newComment)
 						.set('Authorization', helpers.makeAuthHeader(testUsers[0]))
 						.expect(400, {
-							error: `Missing '${field}' in request body`
+							message: `Missing '${field}' in request body`
 						});
 				});
 			});
@@ -178,7 +178,7 @@ describe('Comments Endpoints', function() {
 					.send({ irrelevantField: 'foo' })
 					.set('Authorization', helpers.makeAuthHeader(testUsers[0]))
 					.expect(400, {
-						error: `Update must contain comment and rating`
+						message: `Update must contain comment and rating`
 					});
 			});
 

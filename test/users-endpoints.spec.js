@@ -43,7 +43,7 @@ describe('Users Endpoints', function() {
 						.post('/api/users')
 						.send(registerAttemptBody)
 						.expect(400, {
-							error: `Missing '${field}' in request body`
+							message: `Missing '${field}' in request body`
 						});
 				});
 			});
@@ -57,7 +57,7 @@ describe('Users Endpoints', function() {
 				return supertest(app)
 					.post('/api/users')
 					.send(userShortPassword)
-					.expect(400, { error: `Password be longer than 8 characters` });
+					.expect(400, { message: `Password be longer than 8 characters` });
 			});
 
 			it(`responds 400 'Password be less than 72 characters' when long password`, () => {
@@ -69,7 +69,7 @@ describe('Users Endpoints', function() {
 				return supertest(app)
 					.post('/api/users')
 					.send(userLongPassword)
-					.expect(400, { error: `Password be less than 72 characters` });
+					.expect(400, { message: `Password be less than 72 characters` });
 			});
 
 			it(`responds 400 error when password starts with spaces`, () => {
@@ -82,7 +82,7 @@ describe('Users Endpoints', function() {
 					.post('/api/users')
 					.send(userPasswordStartsSpaces)
 					.expect(400, {
-						error: `Password must not start or end with empty spaces`
+						message: `Password must not start or end with empty spaces`
 					});
 			});
 
@@ -96,7 +96,7 @@ describe('Users Endpoints', function() {
 					.post('/api/users')
 					.send(userPasswordEndsSpaces)
 					.expect(400, {
-						error: `Password must not start or end with empty spaces`
+						message: `Password must not start or end with empty spaces`
 					});
 			});
 
@@ -110,7 +110,7 @@ describe('Users Endpoints', function() {
 					.post('/api/users')
 					.send(userPasswordNotComplex)
 					.expect(400, {
-						error: `Password must contain one upper case, lower case, number and special character`
+						message: `Password must contain one upper case, lower case, number and special character`
 					});
 			});
 
@@ -123,7 +123,7 @@ describe('Users Endpoints', function() {
 				return supertest(app)
 					.post('/api/users')
 					.send(duplicateUser)
-					.expect(400, { error: `Username already taken` });
+					.expect(400, { message: `Username already taken` });
 			});
 		});
 

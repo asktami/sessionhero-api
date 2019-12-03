@@ -34,7 +34,7 @@ scheduleRouter
 						ip: `${req.ip}`
 					});
 					return res.status(404).json({
-						error: `Schedule with for loginUserId ${loginUserId} not found.`
+						message: `Schedule with for loginUserId ${loginUserId} not found.`
 					});
 				}
 				res.json(schedule.map(scheduleService.serializeSchedule));
@@ -80,7 +80,7 @@ scheduleRouter
 					ip: `${req.ip}`
 				});
 				return res.status(400).send({
-					error: `'${field}' is required`
+					message: `'${field}' is required`
 				});
 			}
 		}

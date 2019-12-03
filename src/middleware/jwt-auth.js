@@ -12,7 +12,7 @@ function requireAuth(req, res, next) {
 		next();
 	} else {
 		if (!authToken.toLowerCase().startsWith('bearer ')) {
-			return res.status(401).json({ error: 'Missing bearer token' });
+			return res.status(401).json({ message: 'Missing bearer token' });
 		} else {
 			bearerToken = authToken.slice(7, authToken.length);
 		}
@@ -23,7 +23,7 @@ function requireAuth(req, res, next) {
 			AuthService.getUserWithUserName(req.app.get('db'), payload.sub)
 				.then(user => {
 					if (!user)
-						return res.status(401).json({ error: 'Unauthorized request' });
+						return res.status(401).json({ message: 'Unauthorized request' });
 
 					// NOTE: successfully found logged in user is added to req object
 					// this means we can get the logged in user's id from req.user.id
@@ -46,7 +46,7 @@ function requireAuth(req, res, next) {
 					next(err);
 				});
 		} catch (error) {
-			res.status(401).json({ error: error + '(Unauthorized request)' });
+			res.status(401).json({ message: error + '(Unauthorized request)' });
 		}
 	}
 }

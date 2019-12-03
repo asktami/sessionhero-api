@@ -73,14 +73,14 @@ async function checkSessionExists(req, res, next) {
 			});
 
 			return res.status(404).json({
-				error: `Session doesn't exist`
+				message: `Session doesn't exist`
 			});
 		}
 
 		res.session = session;
 		next();
 	} catch (error) {
-		res.status(500).json({ error: error });
+		res.status(500).json({ error });
 		next(error);
 	}
 }

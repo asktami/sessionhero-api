@@ -77,7 +77,7 @@ describe('Protected endpoints', function() {
 			it(`responds 401 'Missing bearer token' when no bearer token`, () => {
 				return endpoint
 					.method(endpoint.path)
-					.expect(401, { error: `Missing bearer token` });
+					.expect(401, { message: `Missing bearer token` });
 			});
 
 			it(`responds 401 'Unauthorized request' when invalid JWT secret`, () => {
@@ -91,7 +91,7 @@ describe('Protected endpoints', function() {
 						helpers.makeAuthHeader(validUser, invalidSecret)
 					)
 					.expect(401, {
-						error: `JsonWebTokenError: invalid signature(Unauthorized request)`
+						message: `JsonWebTokenError: invalid signature(Unauthorized request)`
 					});
 			});
 
@@ -100,7 +100,7 @@ describe('Protected endpoints', function() {
 				return endpoint
 					.method(endpoint.path)
 					.set('Authorization', helpers.makeAuthHeader(invalidUser))
-					.expect(401, { error: `Unauthorized request` });
+					.expect(401, { message: `Unauthorized request` });
 			});
 		});
 	});

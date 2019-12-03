@@ -42,7 +42,7 @@ describe('Auth Endpoints', function() {
 					.post('/api/auth/login')
 					.send(loginAttemptBody)
 					.expect(400, {
-						error: `Missing '${field}' in request body`
+						message: `Missing '${field}' in request body`
 					});
 			});
 		});
@@ -52,7 +52,7 @@ describe('Auth Endpoints', function() {
 			return supertest(app)
 				.post('/api/auth/login')
 				.send(userInvalidUser)
-				.expect(400, { error: `Incorrect username or password` });
+				.expect(400, { message: `Incorrect username or password` });
 		});
 
 		it(`responds 400 'invalid username or password' when bad password`, () => {
@@ -63,7 +63,7 @@ describe('Auth Endpoints', function() {
 			return supertest(app)
 				.post('/api/auth/login')
 				.send(userInvalidPass)
-				.expect(400, { error: `Incorrect username or password` });
+				.expect(400, { message: `Incorrect username or password` });
 		});
 
 		it(`responds 200 and JWT auth token using secret when valid credentials`, () => {

@@ -5,7 +5,7 @@ function errorHandler(error, req, res, next) {
 	let response;
 	if (NODE_ENV === 'production') {
 		response = {
-			error: 'server error: ' + error.message + ' ' + error
+			message: 'server error: ' + error.message + ' ' + error
 		};
 	} else {
 		// include winston logging
@@ -18,7 +18,8 @@ function errorHandler(error, req, res, next) {
 			} - ${req.ip}`
 		);
 		response = {
-			error: 'server error: ' + error.message + ' ' + error + ' in errorHandler'
+			message:
+				'server error: ' + error.message + ' ' + error + ' in errorHandler'
 		};
 	}
 

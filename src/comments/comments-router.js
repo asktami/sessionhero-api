@@ -31,7 +31,7 @@ commentRouter.route('/').post(requireAuth, jsonBodyParser, (req, res, next) => {
 			});
 
 			return res.status(400).json({
-				error: `Missing '${key}' in request body`
+				message: `Missing '${key}' in request body`
 			});
 		}
 
@@ -111,7 +111,7 @@ commentRouter
 				ip: `${req.ip}`
 			});
 			return res.status(400).json({
-				error: `Update must contain comment and rating`
+				message: `Update must contain comment and rating`
 			});
 		}
 
@@ -152,7 +152,7 @@ async function checkCommentExists(req, res, next) {
 			});
 
 			return res.status(404).json({
-				error: `Comment Not Found`
+				message: `Comment Not Found`
 			});
 		}
 

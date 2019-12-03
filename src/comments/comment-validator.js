@@ -8,18 +8,14 @@ function getCommentValidationError({ comment, rating }) {
 	if (comment && comment.length < 5) {
 		logger.error(`Invalid comment '${comment}' supplied`);
 		return {
-			error: {
-				message: `The comment must be at least 5 characters`
-			}
+			message: `The comment must be at least 5 characters`
 		};
 	}
 
 	if (rating && (!Number.isInteger(rating) || rating < 1 || rating > 5)) {
 		logger.error(`Invalid rating '${rating}' supplied`);
 		return {
-			error: {
-				message: `The rating must be a number between 1 and 5`
-			}
+			message: `The rating must be a number between 1 and 5`
 		};
 	}
 

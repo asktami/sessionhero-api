@@ -8,7 +8,7 @@ function requireAuth(req, res, next) {
 	let basicToken;
 
 	if (!authToken.toLowerCase().startsWith('basic ')) {
-		return res.status(401).json({ error: 'Missing basic token' });
+		return res.status(401).json({ message: 'Missing basic token' });
 	} else {
 		basicToken = authToken.slice('basic '.length, authToken.length);
 	}
@@ -20,7 +20,7 @@ function requireAuth(req, res, next) {
 	);
 
 	if (!tokenUserName || !tokenPassword) {
-		return res.status(401).json({ error: 'Unauthorized request' });
+		return res.status(401).json({ message: 'Unauthorized request' });
 	}
 
 	// query the database for a user matching this username
@@ -28,7 +28,7 @@ function requireAuth(req, res, next) {
 	AuthService.getUserWithUserName(req.app.get('db'), tokenUserName)
 		.then(user => {
 			if (!user) {
-				return res.status(401).json({ error: 'Unauthorized request' });
+				return res.status(401).json({ message: 'Unauthorized request' });
 			}
 			// add the user object from the database to the request object
 			return AuthService.comparePasswords(tokenPassword, user.password).then(
@@ -36,7 +36,7 @@ function requireAuth(req, res, next) {
 					if (!passwordsMatch) {
 						return res
 							.status(401)
-							.json({ error: 'Unauthorized request basic-auth' });
+							.json({ message: 'Unauthorized request basic-auth' });
 					}
 					req.user = user;
 					next();
