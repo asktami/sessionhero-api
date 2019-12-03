@@ -89,9 +89,10 @@ scheduleRouter
 		// req.user is set in middleware/basic-auth
 		// this is the login user id
 		newScheduleItem.user_id = req.user.id;
+		let loginUserId = req.user.id;
 
 		scheduleService
-			.insertSchedule(knexInstance, newScheduleItem)
+			.insertScheduleIfNotExists(knexInstance, newScheduleItem, loginUserId, id)
 			.then(schedule => {
 				logger.info({
 					message: `Session_id ${schedule.session_id} added to schedule.`,

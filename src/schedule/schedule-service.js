@@ -29,7 +29,21 @@ const scheduleService = {
 			.leftJoin('users', 'users.id', 'schedule.user_id')
 			.where('schedule.user_id', loginUserId);
 	},
-
+	insertScheduleIfNotExists(knex, newScheduleItem, loginUserId, session_id) {
+		return knex(table)
+			.select('*')
+			.where({ session_id: session_id, user_id: loginUserId })
+			.then(rows => {
+				if (rows.length === 0) {
+					// no matching records found
+					//return knex(table).insert(newScheduleItem);
+					return scheduleService.insertSchedule(knex, newScheduleItem);
+				} else {
+					// return or throw - existing record found
+					return rows[0];
+				}
+			});
+	},
 	insertSchedule(knex, newScheduleItem) {
 		return knex
 			.insert(newScheduleItem)
