@@ -9,29 +9,6 @@ const db = knex({
 
 app.set('db', db);
 
-// to DEBUG database connection ----------------------
-// console.log('NODE_ENV = ', process.env.NODE_ENV);
-// console.log('DATABASE_URL = ', DATABASE_URL);
-// console.log('----------------');
-// const qry = db
-// 	.select('*')
-// 	.from(process.env.TEST_TABLE)
-// 	.toQuery();
-
-// const conn = db.select('*').from(process.env.TEST_TABLE);
-
-// const rows = db
-// 	.select('*')
-// 	.from(process.env.TEST_TABLE)
-// 	.then(result => {
-// 		console.log('rows = ', result);
-// 	});
-
-// console.log(qry);
-// console.log(conn.client.connectionSettings);
-// console.log('----------------');
-// to END DEBUG database connection ----------------------
-
 app.listen(PORT, () => {
 	console.log(`Server listening at http://localhost:${PORT}`);
 });
