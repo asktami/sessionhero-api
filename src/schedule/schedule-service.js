@@ -36,6 +36,8 @@ const scheduleService = {
 			.then(rows => {
 				if (rows.length === 0) {
 					// no matching records found
+					// so ok to add new schedule record
+					// this prevents a duplicate schedule record being created because of a page render timing issue
 					//return knex(table).insert(newScheduleItem);
 					return scheduleService.insertSchedule(knex, newScheduleItem);
 				} else {

@@ -22,7 +22,7 @@ app.use(
 	})
 );
 
-const { CLIENT_ORIGIN } = require('./config');
+// const { CLIENT_ORIGIN } = require('./config');
 
 // app.use(
 // 	cors({
@@ -35,7 +35,7 @@ app.use(cors());
 app.use(helmet());
 app.use(helmet.hidePoweredBy());
 
-// TBD DO NOT USE validate bearer token b/c doint protected routes with jwt!!!
+// DO NOT USE validate bearer token b/c do in protected routes with jwt!!!
 // app.use(validateBearerToken);
 
 app.use('/api/sessions', sessionsRouter);

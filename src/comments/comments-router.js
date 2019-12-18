@@ -15,6 +15,7 @@ const jsonBodyParser = express.json();
 
 // get the user_id from the authorization header
 
+// post/save comment
 commentRouter.route('/').post(requireAuth, jsonBodyParser, (req, res, next) => {
 	const { session_id, comment, rating } = req.body;
 	const newComment = { session_id, comment, rating };
@@ -68,6 +69,7 @@ commentRouter.route('/').post(requireAuth, jsonBodyParser, (req, res, next) => {
 		.catch(next);
 });
 
+// get comment to be updated/deleted
 commentRouter
 	.route('/:id')
 	.all(requireAuth)

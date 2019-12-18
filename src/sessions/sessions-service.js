@@ -9,7 +9,7 @@ const sessionService = {
 				db('sessions')
 					.select(
 						'sessions.id as id',
-						'sessions.id as session_id', // so that has field with same name as in schedule
+						'sessions.id as session_id', // so that has field with same name as in schedule since use same page for schedule and session list
 						'track',
 						'day',
 						'date',
@@ -47,7 +47,7 @@ const sessionService = {
 				.from(table)
 				.select(
 					'sessions.id as id',
-					'sessions.id as session_id', // so that has field with same name as in schedule
+					'sessions.id as session_id', // so that has field with same name as in schedule since use same page for schedule and session list
 					'track',
 					'day',
 					'date',

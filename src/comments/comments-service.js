@@ -2,7 +2,8 @@ const xss = require('xss');
 let table = 'comments';
 
 const commentService = {
-	// join comments and users
+	// whenever get comment,
+	// join comment record with (created by) user record
 	getById(knex, id) {
 		return knex
 			.from(`comments as comm`)
