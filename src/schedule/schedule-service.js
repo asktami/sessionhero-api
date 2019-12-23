@@ -25,8 +25,8 @@ const scheduleService = {
 				'speaker'
 			)
 			.from(table)
-			.leftJoin('sessions', 'sessions.id', 'schedule.session_id')
-			.leftJoin('users', 'users.id', 'schedule.user_id')
+			.join('sessions', 'sessions.id', 'schedule.session_id')
+			.join('users', 'users.id', 'schedule.user_id')
 			.where('schedule.user_id', loginUserId);
 	},
 	insertScheduleIfNotExists(knex, newScheduleItem, loginUserId, session_id) {
