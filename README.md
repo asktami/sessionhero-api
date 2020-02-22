@@ -16,6 +16,11 @@ Works with [https://github.com/asktami/sessionhero-app](https://github.com/askta
 
 - an Express server for the API with various endpoints
 
+## Hosted on
+
+- Heroku
+- Zeit
+
 ## Setup
 
 1. Clone this repo
