@@ -1,6 +1,6 @@
 # sessionhero-api
 
-An Express server app with CRUD endpoints that retrieves data from a PostgreSQL datasource.
+An Express server app with CRUD endpoints that gets data from a PostgreSQL datasource.
 
 Works with [https://github.com/asktami/sessionhero-app](https://github.com/asktami/sessionhero-app).
 
