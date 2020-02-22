@@ -19,7 +19,6 @@ Works with [https://github.com/asktami/sessionhero-app](https://github.com/askta
 ## Hosted on
 
 - Heroku
-- Zeit
 
 ## Setup
 
