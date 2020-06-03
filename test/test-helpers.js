@@ -9,22 +9,22 @@ function makeUsersArray() {
 			username: 'test-user-1',
 			password: 'password',
 			fullname: 'Test user 1',
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			date_created: new Date('2029-01-22T16:28:32.615Z'),
 		},
 		{
 			id: 2,
 			username: 'test-user-2',
 			password: 'password',
 			fullname: 'Test user 2',
-			date_created: new Date('2029-01-22T16:28:32.615Z')
+			date_created: new Date('2029-01-22T16:28:32.615Z'),
 		},
 		{
 			id: 911,
 			username: 'test-user-3',
 			password: 'has-no-schedule',
 			fullname: 'Test user 3',
-			date_created: new Date('2029-01-22T16:28:32.615Z')
-		}
+			date_created: new Date('2029-01-22T16:28:32.615Z'),
+		},
 	];
 }
 
@@ -49,7 +49,7 @@ function makeSessionsArray() {
 			objective_3:
 				'Label creation within FileMaker to save a lot of time (looping is key)',
 			objective_4: 'Practicalities of FileMaker in a warehouse space',
-			speaker: 'Bradley Boggs (Chameleon Like, Inc.)'
+			speaker: 'Bradley Boggs (Chameleon Like, Inc.)',
 		},
 		{
 			track: 'Create',
@@ -70,8 +70,8 @@ function makeSessionsArray() {
 				'How to take simple principles to demonstrate examples of visual narratives that reflect users intent',
 			objective_4:
 				'How to create sequences and workflows to demonstrate purpose and a sense of progress',
-			speaker: 'Chih Hsiao, Esther Kim'
-		}
+			speaker: 'Chih Hsiao, Esther Kim',
+		},
 	];
 }
 
@@ -82,29 +82,29 @@ function makeCommentsArray(users, sessions) {
 			rating: 2,
 			comment: 'First test comment!',
 			session_id: 'BUS04',
-			user_id: 1
+			user_id: 1,
 		},
 		{
 			id: 2,
 			rating: 3,
 			comment: 'Second test review!',
 			session_id: 'BUS04',
-			user_id: 1
+			user_id: 1,
 		},
 		{
 			id: 3,
 			rating: 1,
 			comment: 'Third test review!',
 			session_id: 'CRE12',
-			user_id: 2
+			user_id: 2,
 		},
 		{
 			id: 4,
 			rating: 5,
 			comment: 'Fourth test review!',
 			session_id: 'CRE12',
-			user_id: 2
-		}
+			user_id: 2,
+		},
 	];
 }
 
@@ -113,13 +113,13 @@ function makeScheduleArray(users, sessions) {
 		{
 			id: 1,
 			session_id: sessions[0].id,
-			user_id: users[0].id
+			user_id: users[0].id,
 		},
 		{
 			id: 2,
 			session_id: sessions[1].id,
-			user_id: users[0].id
-		}
+			user_id: users[0].id,
+		},
 	];
 }
 
@@ -141,14 +141,14 @@ function makeExpectedSession(session) {
 		objective_2: session.objective_2,
 		objective_3: session.objective_3,
 		objective_4: session.objective_4,
-		speaker: session.speaker
+		speaker: session.speaker,
 	};
 }
 
 // schedule + session join table
 function makeExpectedSchedule(userId, schedule, testSessions = []) {
 	const session = testSessions.find(
-		session => session.id === schedule.session_id
+		(session) => session.id === schedule.session_id
 	);
 
 	return {
@@ -169,13 +169,13 @@ function makeExpectedSchedule(userId, schedule, testSessions = []) {
 		objective_2: session.objective_2,
 		objective_3: session.objective_3,
 		objective_4: session.objective_4,
-		speaker: session.speaker
+		speaker: session.speaker,
 	};
 }
 
 // session + comments + users join table
 function makeExpectedSessionComments(comment, testUsers) {
-	const user = testUsers.find(user => user.id === comment.user_id);
+	const user = testUsers.find((user) => user.id === comment.user_id);
 
 	return {
 		id: comment.id,
@@ -183,7 +183,7 @@ function makeExpectedSessionComments(comment, testUsers) {
 		comment: comment.comment,
 		rating: String(comment.rating),
 		session_id: comment.session_id,
-		fullname: user.fullname
+		fullname: user.fullname,
 	};
 }
 
@@ -193,7 +193,7 @@ function makeExpectedComment(comment) {
 		comment: comment.comment,
 		rating: comment.rating,
 		session_id: comment.id,
-		user_id: comment.user_id
+		user_id: comment.user_id,
 	};
 }
 
@@ -205,17 +205,17 @@ function makeMaliciousComment() {
 		user_id: 1,
 		session_id: 'BUS04',
 		comment: 'Naughty naughty very naughty <script>alert("xss");</script>',
-		rating: 1
+		rating: 1,
 	};
 
 	const expectedComment = {
 		...maliciousComment,
 		comment:
-			'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;'
+			'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
 	};
 	return {
 		maliciousComment,
-		expectedComment
+		expectedComment,
 	};
 }
 
@@ -229,7 +229,7 @@ function makeFixtures() {
 
 // sessions_id is a user generated text string
 function cleanTables(db) {
-	return db.transaction(trx =>
+	return db.transaction((trx) =>
 		trx.raw(`TRUNCATE comments RESTART IDENTITY CASCADE;
 	TRUNCATE schedule  RESTART IDENTITY CASCADE;
 	TRUNCATE sessions  RESTART IDENTITY CASCADE;
@@ -239,9 +239,9 @@ function cleanTables(db) {
 
 // to bcrypt passwords
 function seedUsers(db, users) {
-	const preppedUsers = users.map(user => ({
+	const preppedUsers = users.map((user) => ({
 		...user,
-		password: bcrypt.hashSync(user.password, 1)
+		password: bcrypt.hashSync(user.password, 1),
 	}));
 	return db
 		.into('users')
@@ -263,7 +263,7 @@ function makeAuthHeader(user, secret = config.JWT_SECRET) {
 	const token = jwt.sign({ user_id: user.id }, secret, {
 		subject: user.username,
 		expiresIn: config.JWT_EXPIRY,
-		algorithm: 'HS256'
+		algorithm: 'HS256',
 	});
 
 	return `Bearer ${token}`;
@@ -287,5 +287,5 @@ module.exports = {
 	seedTables,
 	// seedMaliciousComment,
 	makeAuthHeader,
-	seedUsers
+	seedUsers,
 };
