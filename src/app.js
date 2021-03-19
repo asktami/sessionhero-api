@@ -11,32 +11,20 @@ const scheduleRouter = require('./schedule/schedule-router');
 const usersRouter = require('./users/users-router');
 const authRouter = require('./auth/auth-router');
 
-// const validateBearerToken = require('./validate-bearer-token');
 const errorHandler = require('./error-handler');
 
 const app = express();
 
 app.use(
 	morgan(NODE_ENV === 'production' ? 'tiny' : 'common', {
-		skip: () => NODE_ENV === 'test'
+		skip: () => NODE_ENV === 'test',
 	})
 );
-
-// const { CLIENT_ORIGIN } = require('./config');
-
-// app.use(
-// 	cors({
-// 		origin: CLIENT_ORIGIN
-// 	})
-// );
 
 app.use(cors());
 
 app.use(helmet());
 app.use(helmet.hidePoweredBy());
-
-// DO NOT USE validate bearer token b/c do in protected routes with jwt!!!
-// app.use(validateBearerToken);
 
 app.use('/api/sessions', sessionsRouter);
 app.use('/api/comments', commentsRouter);
