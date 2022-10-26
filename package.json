@@ -34,12 +34,13 @@
 		"chai": "^4.2.0",
 		"eslint": "^6.5.1",
 		"eslint-plugin-prettier": "^3.1.1",
-		"mocha": "^7.1.2",
+		"mocha": "^10.1.0",
 		"nodemon": "^2.0.4",
 		"postgrator-cli": "^3.2.0",
 		"prettier": "1.18.2",
 		"supertest": "^4.0.2"
-	}, "engines": {
+	},
+	"engines": {
 		"node": "10.x"
 	}
 }
